@@ -10,7 +10,7 @@ internal interface APODDataSourceDef {
 
     suspend fun fetchAstronomyPictureByDate(date: String): APOD?
 
-    suspend fun saveApodToDb(apod: APOD) {
+    suspend fun saveApodsToDb(vararg apod: APOD) {
         throw NoClassDefFoundError()
     }
 

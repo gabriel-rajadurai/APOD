@@ -7,7 +7,7 @@ import com.gabriel.data.models.APOD
 interface ApodDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveApod(apod: APOD)
+    suspend fun saveApods(vararg apod: APOD)
 
     @Delete()
     suspend fun deleteApod(vararg apod: APOD)

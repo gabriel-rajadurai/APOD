@@ -6,7 +6,7 @@ import com.gabriel.data.models.APOD
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class APODLocalDatasource(private val apodDao: ApodDAO) : APODDataSourceDef {
+class APODLocalDataSource(private val apodDao: ApodDAO) : APODDataSourceDef {
 
 
     override suspend fun fetchAstronomyPictureOfTheDay(): APOD? {
@@ -23,8 +23,8 @@ class APODLocalDatasource(private val apodDao: ApodDAO) : APODDataSourceDef {
         return apodDao.getApodByDate(date)
     }
 
-    override suspend fun saveApodToDb(apod: APOD) {
-        apodDao.saveApod(apod)
+    override suspend fun saveApodsToDb(vararg apod: APOD) {
+        apodDao.saveApods(*apod)
     }
 
     override suspend fun deleteApods(vararg apod: APOD) {

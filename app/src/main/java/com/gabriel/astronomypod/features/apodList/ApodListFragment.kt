@@ -18,6 +18,7 @@ import androidx.navigation.fragment.findNavController
 import com.gabriel.astronomypod.R
 import com.gabriel.astronomypod.common.PermissionManager
 import com.gabriel.astronomypod.common.VerticalSpacesItemDecoration
+import com.gabriel.astronomypod.common.ViewModelFactory
 import com.gabriel.astronomypod.features.viewApod.ViewApodActivity
 import com.gabriel.data.models.APOD
 import kotlinx.android.synthetic.main.apod_list_fragment.*
@@ -25,7 +26,11 @@ import kotlinx.android.synthetic.main.apod_list_fragment.*
 class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener {
 
     //This creates the viewModel using lazy initialization
-    private val viewModel: ApodListViewModel by viewModels()
+    private val viewModel: ApodListViewModel by viewModels {
+        ViewModelFactory {
+            ApodListViewModel(requireActivity().application)
+        }
+    }
     private val adapter by lazy { ApodListAdapter(this) }
     private val permissionManager by lazy { PermissionManager(this) }
 
@@ -45,7 +50,7 @@ class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener {
     }
 
     private fun setupObservers() {
-        viewModel.apodlist.observe(viewLifecycleOwner, Observer {
+        viewModel.apodList.observe(viewLifecycleOwner, Observer {
             progressBar.visibility = View.GONE
             adapter.submitList(it)
         })

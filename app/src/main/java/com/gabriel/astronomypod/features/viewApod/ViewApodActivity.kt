@@ -27,7 +27,7 @@ class ViewApodActivity : AppCompatActivity() {
 
     private val viewModel: ViewApodViewModel by viewModels {
         ViewModelFactory {
-            ViewApodViewModel(apodDate)
+            ViewApodViewModel(application, apodDate)
         }
     }
     private val apodDate by lazy {

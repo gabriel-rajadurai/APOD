@@ -1,15 +1,10 @@
 package com.gabriel.astronomypod.features.apodOfTheDay
 
-import android.animation.Animator
-import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewPropertyAnimator
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewPropertyAnimatorCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -20,7 +15,11 @@ import kotlinx.android.synthetic.main.apod_today_fragment.*
 
 class APODTodayFragment : Fragment() {
 
-    private val viewModel: APODTodayViewModel by viewModels()
+    private val viewModel: APODTodayViewModel by viewModels{
+        ViewModelFactory{
+            APODTodayViewModel(requireActivity().application)
+        }
+    }
     private val anim1 by lazy {
         ivShape1.animate().rotationBy(360f).setDuration(1000)
     }
