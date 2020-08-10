@@ -11,10 +11,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.MimeTypeMap
 import androidx.appcompat.app.AppCompatActivity
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.app.ShareCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.gabriel.astronomypod.ApodApplication
 import com.gabriel.astronomypod.R
@@ -26,6 +28,7 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import kotlinx.android.synthetic.main.apod_list_fragment.*
 import kotlinx.android.synthetic.main.apod_list_fragment.loadingView
 import kotlinx.android.synthetic.main.apod_today_fragment.*
+import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -58,6 +61,11 @@ class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener {
         fabDate.setOnClickListener {
             showDatePicker()
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.fetchApodList()
     }
 
     override fun onRequestPermissionsResult(
@@ -111,9 +119,15 @@ class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener {
     }
 
     override fun viewApod(apod: APOD) {
-        findNavController().navigate(R.id.viewApodActivity, Bundle().apply {
-            putString(ViewApodActivity.EXTRA_APOD_DATE, apod.date)
-        })
+        if (apod.mediaType == APOD.MEDIA_TYPE_IMAGE)
+            findNavController().navigate(R.id.viewApodActivity, Bundle().apply {
+                putString(ViewApodActivity.EXTRA_APOD_DATE, apod.date)
+            })
+        else if (apod.mediaType == APOD.MEDIA_TYPE_VIDEO) {
+            CustomTabsIntent.Builder()
+                .build()
+                .launchUrl(requireContext(), Uri.parse(apod.url))
+        }
     }
 
     private fun setupObservers() {
@@ -155,14 +169,16 @@ class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener {
             )
             .build().apply {
                 addOnPositiveButtonClickListener {
-                    findNavController().navigate(R.id.viewApodActivity, Bundle().apply {
-                        val selectedDate =
-                            LocalDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneOffset.UTC)
-                                .toLocalDate().format(
-                                    DateTimeFormatter.ofPattern(APOD.DATE_FORMAT)
-                                )
-                        putString(ViewApodActivity.EXTRA_APOD_DATE, selectedDate)
-                    })
+                    val selectedDate =
+                        LocalDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneOffset.UTC)
+                            .toLocalDate().format(
+                                DateTimeFormatter.ofPattern(APOD.DATE_FORMAT)
+                            )
+                    lifecycleScope.launch {
+                        viewModel.fetchApod(selectedDate)?.let { apod ->
+                            viewApod(apod)
+                        }
+                    }
                 }
             }
             .show(childFragmentManager, "ApodListFragment")
