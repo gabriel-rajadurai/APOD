@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AstronomyPOD</string>
+    <string name="app_name">APOD</string>
     <string name="load_today_picture">Loading today\'s picture</string>
     <string name="loading">Loading..</string>
     <string name="loading_media">Loading media</string>
