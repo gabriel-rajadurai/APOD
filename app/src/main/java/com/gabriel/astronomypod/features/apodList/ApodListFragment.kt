@@ -2,27 +2,24 @@ package com.gabriel.astronomypod.features.apodList
 
 import android.app.DownloadManager
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.MimeTypeMap
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ShareCompat
-import androidx.core.content.ContextCompat.getSystemService
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.gabriel.astronomypod.R
 import com.gabriel.astronomypod.common.PermissionManager
 import com.gabriel.astronomypod.common.VerticalSpacesItemDecoration
+import com.gabriel.astronomypod.features.viewApod.ViewApodActivity
 import com.gabriel.data.models.APOD
 import kotlinx.android.synthetic.main.apod_list_fragment.*
-import kotlinx.coroutines.launch
 
 class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener {
 
@@ -103,7 +100,9 @@ class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener {
     }
 
     override fun viewApod(apod: APOD) {
-        TODO("Not yet implemented")
+        findNavController().navigate(R.id.viewApodActivity, Bundle().apply {
+            putString(ViewApodActivity.EXTRA_APOD_DATE, apod.date)
+        })
     }
 
 }

@@ -6,12 +6,29 @@ import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 
-fun ImageView.loadUrl(url: String) {
+fun ImageView.loadUrl(url: String, scaleType: ScaleType = ScaleType.NONE) {
+
     Glide.with(this)
         .load(Uri.parse(url))
-        .centerCrop()
+        .apply {
+            when (scaleType) {
+                ScaleType.CENTER_CROP -> centerCrop()
+                ScaleType.FIT_CENTER -> fitCenter()
+                ScaleType.CENTER_INSIDE -> centerInside()
+                ScaleType.NONE -> {
+                    // Do nothing
+                }
+            }
+        }
         .transition(DrawableTransitionOptions.withCrossFade())
         .into(this)
+}
+
+enum class ScaleType {
+    CENTER_CROP,
+    FIT_CENTER,
+    NONE,
+    CENTER_INSIDE
 }
 
 fun View.gone() {
