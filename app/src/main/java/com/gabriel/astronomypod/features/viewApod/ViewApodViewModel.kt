@@ -7,6 +7,9 @@ import com.gabriel.astronomypod.common.BaseViewModel
 import com.gabriel.data.models.APOD
 import com.gabriel.data.repos.ApodRepo
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 class ViewApodViewModel @Inject constructor(val app: Application) :
@@ -25,7 +28,8 @@ class ViewApodViewModel @Inject constructor(val app: Application) :
             currentApod.value = apodRepo.fetchAstronomyPictureByDate(date)?.also {
                 title.value = it.title
                 explanation.value = it.explanation
-                this@ViewApodViewModel.date.value = it.date
+                this@ViewApodViewModel.date.value =
+                    LocalDate.parse(it.date).format(DateTimeFormatter.ofPattern("MMM dd, YYYY"))
             }
         }
     }

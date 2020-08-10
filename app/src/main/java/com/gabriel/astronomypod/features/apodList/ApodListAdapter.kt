@@ -13,6 +13,9 @@ import com.gabriel.astronomypod.common.visible
 import com.gabriel.astronomypod.databinding.ItemApodBinding
 import com.gabriel.data.models.APOD
 import kotlinx.android.synthetic.main.item_apod.view.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class ApodListAdapter(private val listener: ApodItemListener) :
     ListAdapter<APOD, ApodListAdapter.ViewHolder>(DIFF_CALLBACK) {
@@ -45,7 +48,9 @@ class ApodListAdapter(private val listener: ApodItemListener) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(apod: APOD) {
 
-            binding.apod = apod
+            binding.apod = apod.copy(
+                date = LocalDate.parse(apod.date).format(DateTimeFormatter.ofPattern("MMM dd, YYYY"))
+            )
 
             if (previousExpandedItem == adapterPosition)
                 itemView.infoLayout.visible()
