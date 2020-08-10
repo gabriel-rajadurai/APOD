@@ -1,7 +1,10 @@
 package com.gabriel.astronomypod.common
 
+import android.animation.Animator
+import android.animation.ObjectAnimator
 import android.net.Uri
 import android.view.View
+import android.view.ViewPropertyAnimator
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -37,4 +40,18 @@ fun View.gone() {
 
 fun View.visible() {
     visibility = View.VISIBLE
+}
+
+fun ViewPropertyAnimator.onComplete(complete:()->Unit){
+    setListener(object : Animator.AnimatorListener {
+        override fun onAnimationRepeat(animation: Animator?) {}
+
+        override fun onAnimationEnd(animation: Animator?) {
+            complete()
+        }
+
+        override fun onAnimationCancel(animation: Animator?) {}
+
+        override fun onAnimationStart(animation: Animator?) {}
+    })
 }
