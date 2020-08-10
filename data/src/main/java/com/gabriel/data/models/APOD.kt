@@ -8,7 +8,7 @@ data class APOD(
     val url: String,
     val explanation: String,
     @SerializedName(HD_URL)
-    val hdUrl: String,
+    val hdUrl: String? = null,
     @SerializedName(MEDIA_TYPE)
     val mediaType: String
 ) {

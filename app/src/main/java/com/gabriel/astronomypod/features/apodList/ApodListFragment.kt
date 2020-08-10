@@ -2,6 +2,7 @@ package com.gabriel.astronomypod.features.apodList
 
 import android.app.DownloadManager
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -11,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.MimeTypeMap
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ShareCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -60,7 +62,12 @@ class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener {
     }
 
     override fun shareApod(apod: APOD) {
-
+        ShareCompat.IntentBuilder.from(requireActivity())
+            .setType("text/plain")
+            .setChooserTitle("Share APOD")
+            .setSubject(apod.title)
+            .setText("${apod.explanation} \n\n View it here -> ${apod.hdUrl ?: apod.url}")
+            .startChooser()
     }
 
     override fun downloadApod(apod: APOD) {
@@ -69,9 +76,9 @@ class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener {
             listener = object :
                 PermissionManager.PermissionsRequestListener {
                 override fun onPermissionGranted() {
-                    val ext = MimeTypeMap.getFileExtensionFromUrl(apod.hdUrl)
+                    val ext = MimeTypeMap.getFileExtensionFromUrl(apod.hdUrl ?: apod.url)
                     val downloadRequest =
-                        DownloadManager.Request(Uri.parse(apod.hdUrl))
+                        DownloadManager.Request(Uri.parse(apod.hdUrl ?: apod.url))
                             .setDestinationInExternalPublicDir(
                                 Environment.DIRECTORY_DOWNLOADS,
                                 "APOD/${apod.title}_${apod.date}.$ext"
@@ -82,7 +89,8 @@ class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener {
                             .setAllowedOverRoaming(true)
                             .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
 
-                    val dm = requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                    val dm =
+                        requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
                     dm.enqueue(downloadRequest)
 
                 }

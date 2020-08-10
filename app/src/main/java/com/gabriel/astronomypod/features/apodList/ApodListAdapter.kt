@@ -74,6 +74,7 @@ class ApodListAdapter(private val listener: ApodItemListener) :
             }
 
             itemView.ivDownload.setOnClickListener { listener.downloadApod(apod) }
+            itemView.ivShare.setOnClickListener { listener.shareApod(apod) }
         }
 
     }
