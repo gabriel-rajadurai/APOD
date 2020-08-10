@@ -1,20 +1,18 @@
 package com.gabriel.data.repos
 
-import android.content.Context
-import com.gabriel.data.datasources.ApodDatabase
 import com.gabriel.data.datasources.defs.APODDataSourceDef
 import com.gabriel.data.datasources.impl.local.APODLocalDataSource
 import com.gabriel.data.datasources.impl.remote.APODRemoteDataSource
 import com.gabriel.data.models.APOD
+import javax.inject.Inject
 
-class ApodRepo(context: Context) : APODDataSourceDef {
+class ApodRepo @Inject constructor() : APODDataSourceDef {
 
-    private val apodRemoteDs by lazy { APODRemoteDataSource() }
-    private val apodLocalDs by lazy {
-        APODLocalDataSource(
-            ApodDatabase.getDatabase(context).apodDao()
-        )
-    }
+    @Inject
+    lateinit var apodRemoteDs: APODRemoteDataSource
+
+    @Inject
+    lateinit var apodLocalDs: APODLocalDataSource
 
     override suspend fun fetchAstronomyPictureOfTheDay(): APOD? {
         return apodLocalDs.fetchAstronomyPictureOfTheDay()?.also {

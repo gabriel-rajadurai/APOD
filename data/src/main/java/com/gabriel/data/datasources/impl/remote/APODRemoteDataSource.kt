@@ -1,19 +1,20 @@
 package com.gabriel.data.datasources.impl.remote
 
+import com.gabriel.data.api.APODNetworkService
 import com.gabriel.data.api.APODRetrofitHelper
 import com.gabriel.data.datasources.defs.APODDataSourceDef
 import com.gabriel.data.models.APOD
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
-internal class APODRemoteDataSource : APODDataSourceDef {
-    private val apodNetworkService by lazy {
-        APODRetrofitHelper().getApodNetworkService()
-    }
+class APODRemoteDataSource @Inject constructor(
+    private val apodNetworkService: APODNetworkService
+) : APODDataSourceDef {
 
     override suspend fun fetchAstronomyPictureOfTheDay(): APOD? {
         return suspendCoroutine {

@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.gabriel.astronomypod.ApodApplication
 import com.gabriel.astronomypod.R
 import com.gabriel.astronomypod.common.PermissionManager
 import com.gabriel.astronomypod.common.VerticalSpacesItemDecoration
@@ -22,15 +23,12 @@ import com.gabriel.astronomypod.common.ViewModelFactory
 import com.gabriel.astronomypod.features.viewApod.ViewApodActivity
 import com.gabriel.data.models.APOD
 import kotlinx.android.synthetic.main.apod_list_fragment.*
+import javax.inject.Inject
 
 class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener {
 
-    //This creates the viewModel using lazy initialization
-    private val viewModel: ApodListViewModel by viewModels {
-        ViewModelFactory {
-            ApodListViewModel(requireActivity().application)
-        }
-    }
+    @Inject
+    lateinit var viewModel: ApodListViewModel
     private val adapter by lazy { ApodListAdapter(this) }
     private val permissionManager by lazy { PermissionManager(this) }
 
@@ -38,6 +36,7 @@ class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        (requireActivity().application as ApodApplication).appGraph.inject(this)
         (requireActivity() as AppCompatActivity).supportActionBar?.hide()
         return inflater.inflate(R.layout.apod_list_fragment, container, false)
     }

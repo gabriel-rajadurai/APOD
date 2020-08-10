@@ -1,19 +1,18 @@
 package com.gabriel.astronomypod.features.apodList
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import com.gabriel.astronomypod.common.BaseViewModel
 import com.gabriel.data.models.APOD
 import com.gabriel.data.repos.ApodRepo
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
-class ApodListViewModel(app: Application) : BaseViewModel(app) {
+class ApodListViewModel @Inject constructor(app: Application) : BaseViewModel(app) {
 
-    private val apodRepo by lazy { ApodRepo(getApplication()) }
+    @Inject
+    lateinit var apodRepo: ApodRepo
     val apodList = liveData {
         emit(
             apodRepo.fetchAstronomyPictures(

@@ -13,6 +13,7 @@ import androidx.activity.viewModels
 import androidx.core.app.ShareCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import com.gabriel.astronomypod.ApodApplication
 import com.gabriel.astronomypod.R
 import com.gabriel.astronomypod.common.PermissionManager
 import com.gabriel.astronomypod.common.ScaleType
@@ -22,14 +23,12 @@ import com.gabriel.astronomypod.databinding.ActivityViewApodBinding
 import com.gabriel.data.models.APOD
 import kotlinx.android.synthetic.main.activity_view_apod.*
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class ViewApodActivity : AppCompatActivity() {
 
-    private val viewModel: ViewApodViewModel by viewModels {
-        ViewModelFactory {
-            ViewApodViewModel(application, apodDate)
-        }
-    }
+    @Inject
+    lateinit var viewModel: ViewApodViewModel
     private val apodDate by lazy {
         intent?.extras?.getString(EXTRA_APOD_DATE)
             ?: throw IllegalArgumentException("APOD date cannot be null")
@@ -38,6 +37,7 @@ class ViewApodActivity : AppCompatActivity() {
     private var binding: ActivityViewApodBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        (application as ApodApplication).appGraph.inject(this)
         super.onCreate(savedInstanceState)
         binding = ActivityViewApodBinding.inflate(layoutInflater)
         setContentView(binding?.root)
@@ -45,6 +45,8 @@ class ViewApodActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding?.lifecycleOwner = this
         binding?.model = viewModel
+
+        viewModel.fetchApod(apodDate)
         setupObservers()
     }
 

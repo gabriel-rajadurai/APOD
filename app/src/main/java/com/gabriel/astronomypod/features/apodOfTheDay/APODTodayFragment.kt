@@ -6,20 +6,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.gabriel.astronomypod.ApodApplication
 import com.gabriel.astronomypod.R
-import com.gabriel.astronomypod.common.*
+import com.gabriel.astronomypod.common.ScaleType
+import com.gabriel.astronomypod.common.loadUrl
+import com.gabriel.astronomypod.common.onComplete
+import com.gabriel.astronomypod.common.visible
 import kotlinx.android.synthetic.main.apod_today_fragment.*
+import javax.inject.Inject
 
 class APODTodayFragment : Fragment() {
 
-    private val viewModel: APODTodayViewModel by viewModels{
-        ViewModelFactory{
-            APODTodayViewModel(requireActivity().application)
-        }
-    }
+    @Inject
+    lateinit var viewModel: APODTodayViewModel
     private val anim1 by lazy {
         ivShape1.animate().rotationBy(360f).setDuration(1000)
     }
@@ -34,6 +35,7 @@ class APODTodayFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        (requireActivity().application as ApodApplication).appGraph.inject(this)
         (requireActivity() as AppCompatActivity).supportActionBar?.hide()
         return inflater.inflate(R.layout.apod_today_fragment, container, false)
     }

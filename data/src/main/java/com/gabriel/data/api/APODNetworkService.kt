@@ -5,7 +5,7 @@ import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-internal interface APODNetworkService {
+interface APODNetworkService {
 
     @GET("apod")
     fun fetchAstronomyPictureOfTheDay(): Call<APOD>

@@ -4,10 +4,12 @@ import android.app.Application
 import androidx.lifecycle.liveData
 import com.gabriel.astronomypod.common.BaseViewModel
 import com.gabriel.data.repos.ApodRepo
+import javax.inject.Inject
 
-class APODTodayViewModel(app: Application) : BaseViewModel(app) {
+class APODTodayViewModel @Inject constructor(app: Application) : BaseViewModel(app) {
 
-    private val apodRepo by lazy { ApodRepo(getApplication()) }
+    @Inject
+    lateinit var apodRepo: ApodRepo
 
     val apodOfTheDay = liveData {
         emit(apodRepo.fetchAstronomyPictureOfTheDay())
