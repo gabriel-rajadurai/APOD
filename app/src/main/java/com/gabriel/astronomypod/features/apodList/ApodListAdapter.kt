@@ -12,9 +12,9 @@ import com.gabriel.astronomypod.common.visible
 import com.gabriel.astronomypod.databinding.ItemApodBinding
 import com.gabriel.data.models.APOD
 import kotlinx.android.synthetic.main.item_apod.view.*
-import org.jetbrains.annotations.NotNull
 
-class ApodListAdapter : ListAdapter<APOD, ApodListAdapter.ViewHolder>(DIFF_CALLBACK) {
+class ApodListAdapter(private val listener: ApodItemListener) :
+    ListAdapter<APOD, ApodListAdapter.ViewHolder>(DIFF_CALLBACK) {
 
     private var previousExpandedItem = -1
 
@@ -32,6 +32,12 @@ class ApodListAdapter : ListAdapter<APOD, ApodListAdapter.ViewHolder>(DIFF_CALLB
         getItem(position)?.let {
             holder.bind(it)
         }
+    }
+
+    interface ApodItemListener {
+        fun shareApod(apod: APOD)
+        fun downloadApod(apod: APOD)
+        fun viewApod(apod: APOD)
     }
 
     inner class ViewHolder(private val binding: ItemApodBinding) :
@@ -66,6 +72,8 @@ class ApodListAdapter : ListAdapter<APOD, ApodListAdapter.ViewHolder>(DIFF_CALLB
                 previousExpandedItem = adapterPosition
                 itemView.infoLayout.visible()
             }
+
+            itemView.ivDownload.setOnClickListener { listener.downloadApod(apod) }
         }
 
     }
