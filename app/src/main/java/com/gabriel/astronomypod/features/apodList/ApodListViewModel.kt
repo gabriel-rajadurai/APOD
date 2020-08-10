@@ -13,8 +13,8 @@ class ApodListViewModel : ViewModel() {
     private val apodRepo by lazy { ApodRepo() }
     val apodlist = liveData<List<APOD>?> {
         emit(apodRepo.fetchAstronomyPictures(
-            LocalDate.now().minusDays(30).format(DateTimeFormatter.ofPattern("YYYY-MM-dd")),
-            LocalDate.now().format(DateTimeFormatter.ofPattern("YYYY-MM-dd"))
+            LocalDate.now().minusDays(30).format(DateTimeFormatter.ofPattern(APOD.DATE_FORMAT)),
+            LocalDate.now().format(DateTimeFormatter.ofPattern(APOD.DATE_FORMAT))
         ))
     }
 }

@@ -1,12 +1,12 @@
 package com.gabriel.data.repos
 
-import com.gabriel.data.defs.APODDataSourceDef
-import com.gabriel.data.impl.APODDataSource
+import com.gabriel.data.datasources.defs.APODDataSourceDef
+import com.gabriel.data.datasources.impl.remote.APODRemoteDataSource
 import com.gabriel.data.models.APOD
 
 class ApodRepo : APODDataSourceDef {
 
-    private val apodDs by lazy { APODDataSource() }
+    private val apodDs by lazy { APODRemoteDataSource() }
 
     override suspend fun fetchAstronomyPictureOfTheDay(): APOD? {
         return apodDs.fetchAstronomyPictureOfTheDay()

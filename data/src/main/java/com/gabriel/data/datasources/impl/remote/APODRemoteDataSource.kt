@@ -1,7 +1,7 @@
-package com.gabriel.data.impl
+package com.gabriel.data.datasources.impl.remote
 
 import com.gabriel.data.api.APODRetrofitHelper
-import com.gabriel.data.defs.APODDataSourceDef
+import com.gabriel.data.datasources.defs.APODDataSourceDef
 import com.gabriel.data.models.APOD
 import retrofit2.Call
 import retrofit2.Callback
@@ -10,7 +10,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
-internal class APODDataSource : APODDataSourceDef {
+internal class APODRemoteDataSource : APODDataSourceDef {
     private val apodNetworkService by lazy {
         APODRetrofitHelper().getApodNetworkService()
     }
