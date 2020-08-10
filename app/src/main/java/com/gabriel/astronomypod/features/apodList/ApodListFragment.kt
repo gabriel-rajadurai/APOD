@@ -27,6 +27,8 @@ import com.gabriel.data.models.APOD
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.MaterialDatePicker
 import kotlinx.android.synthetic.main.apod_list_fragment.*
+import kotlinx.android.synthetic.main.apod_list_fragment.loadingView
+import kotlinx.android.synthetic.main.apod_today_fragment.*
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -47,7 +49,6 @@ class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener {
         savedInstanceState: Bundle?
     ): View? {
         (requireActivity().application as ApodApplication).appGraph.inject(this)
-        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
         return inflater.inflate(R.layout.apod_list_fragment, container, false)
     }
 
@@ -55,7 +56,7 @@ class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener {
         super.onViewCreated(view, savedInstanceState)
         rvApod.addItemDecoration(VerticalSpacesItemDecoration(20))
         rvApod.adapter = adapter
-        loadingView.startLoadAnimation()
+        startLoadingAnimation()
         setupObservers()
         fabDate.setOnClickListener {
             showDatePicker()
@@ -125,6 +126,11 @@ class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener {
             progressBar.visibility = View.GONE
             adapter.submitList(it)
         })
+    }
+
+    private fun startLoadingAnimation() {
+        loadingView.startLoadAnimation()
+        loadingView.setLoadingText(getString(R.string.loading))
     }
 
     private fun showDatePicker() {

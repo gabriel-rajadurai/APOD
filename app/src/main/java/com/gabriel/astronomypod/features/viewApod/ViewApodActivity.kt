@@ -19,8 +19,10 @@ import com.gabriel.astronomypod.common.*
 import com.gabriel.astronomypod.databinding.ActivityViewApodBinding
 import com.gabriel.data.models.APOD
 import kotlinx.android.synthetic.main.activity_view_apod.*
+import kotlinx.android.synthetic.main.activity_view_apod.ivApod
 import kotlinx.android.synthetic.main.activity_view_apod.loadingView
 import kotlinx.android.synthetic.main.apod_list_fragment.*
+import kotlinx.android.synthetic.main.apod_today_fragment.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -40,11 +42,14 @@ class ViewApodActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityViewApodBinding.inflate(layoutInflater)
         setContentView(binding?.root)
+
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         binding?.lifecycleOwner = this
         binding?.model = viewModel
-        loadingView.startLoadAnimation()
+
+        startLoadingAnimation()
         viewModel.fetchApod(apodDate)
         setupObservers()
     }
@@ -94,6 +99,11 @@ class ViewApodActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    private fun startLoadingAnimation() {
+        loadingView.startLoadAnimation()
+        loadingView.setLoadingText(getString(R.string.loading_media))
     }
 
     private fun shareApod() {

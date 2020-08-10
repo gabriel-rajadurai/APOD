@@ -26,7 +26,6 @@ class APODTodayFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         (requireActivity().application as ApodApplication).appGraph.inject(this)
-        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
         return inflater.inflate(R.layout.apod_today_fragment, container, false)
     }
 
@@ -42,6 +41,7 @@ class APODTodayFragment : Fragment() {
 
     private fun startLoadAnimation() {
         loadingView.startLoadAnimation()
+        loadingView.setLoadingText(getString(R.string.load_today_picture))
     }
 
     private fun setupObservers() {
