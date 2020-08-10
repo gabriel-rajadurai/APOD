@@ -15,4 +15,8 @@ class ApodRepo : APODDataSourceDef {
     override suspend fun fetchAstronomyPictures(fromDate: String, endDate: String): List<APOD>? {
         return apodDs.fetchAstronomyPictures(fromDate, endDate)
     }
+
+    override suspend fun fetchAstronomyPictureByDate(date: String): APOD? {
+        return apodDs.fetchAstronomyPictureByDate(date)
+    }
 }

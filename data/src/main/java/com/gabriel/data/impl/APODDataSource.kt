@@ -54,4 +54,23 @@ internal class APODDataSource : APODDataSourceDef {
                 })
         }
     }
+
+    override suspend fun fetchAstronomyPictureByDate(date: String): APOD? {
+        return suspendCoroutine {
+            apodNetworkService.fetchAstronomyPictureByDate(date)
+                .enqueue(object : Callback<APOD> {
+                    override fun onFailure(call: Call<APOD>, t: Throwable) {
+                        it.resumeWithException(t)
+                    }
+
+                    override fun onResponse(call: Call<APOD>, response: Response<APOD>) {
+                        if (response.isSuccessful)
+                            it.resume(response.body())
+                        else
+                            it.resume(null)
+                    }
+
+                })
+        }
+    }
 }

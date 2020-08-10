@@ -15,4 +15,7 @@ internal interface APODNetworkService {
         @Query("start_date") fromDate: String,
         @Query("end_date") endDate: String
     ): Call<List<APOD>>
+
+    @GET("apod")
+    fun fetchAstronomyPictureByDate(@Query("date") date: String): Call<APOD>
 }
