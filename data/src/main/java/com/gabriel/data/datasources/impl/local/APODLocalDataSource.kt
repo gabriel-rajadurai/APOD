@@ -16,7 +16,8 @@ class APODLocalDataSource(private val apodDao: ApodDAO) : APODDataSourceDef {
     }
 
     override suspend fun fetchAstronomyPictures(fromDate: String, endDate: String): List<APOD>? {
-        return apodDao.getApods(fromDate, endDate)
+        //When fetching from Room DB we fetch everything irrespective of the date range
+        return apodDao.getApods()
     }
 
     override suspend fun fetchAstronomyPictureByDate(date: String): APOD? {

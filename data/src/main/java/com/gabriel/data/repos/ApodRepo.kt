@@ -33,6 +33,8 @@ class ApodRepo @Inject constructor() : APODDataSourceDef {
 
     override suspend fun fetchAstronomyPictureByDate(date: String): APOD? {
         return apodLocalDs.fetchAstronomyPictureByDate(date)
-            ?: apodRemoteDs.fetchAstronomyPictureByDate(date)
+            ?: apodRemoteDs.fetchAstronomyPictureByDate(date)?.also {
+                apodLocalDs.saveApodsToDb(it)
+            }
     }
 }

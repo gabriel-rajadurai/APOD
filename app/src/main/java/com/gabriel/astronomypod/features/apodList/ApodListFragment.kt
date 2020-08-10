@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.os.Parcel
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +23,15 @@ import com.gabriel.astronomypod.common.VerticalSpacesItemDecoration
 import com.gabriel.astronomypod.common.ViewModelFactory
 import com.gabriel.astronomypod.features.viewApod.ViewApodActivity
 import com.gabriel.data.models.APOD
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.MaterialDatePicker
 import kotlinx.android.synthetic.main.apod_list_fragment.*
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import java.util.*
 import javax.inject.Inject
 
 class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener {
@@ -46,13 +55,10 @@ class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener {
         rvApod.addItemDecoration(VerticalSpacesItemDecoration(20))
         rvApod.adapter = adapter
         setupObservers()
-    }
 
-    private fun setupObservers() {
-        viewModel.apodList.observe(viewLifecycleOwner, Observer {
-            progressBar.visibility = View.GONE
-            adapter.submitList(it)
-        })
+        fabDate.setOnClickListener {
+            showDatePicker()
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -109,6 +115,50 @@ class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener {
         findNavController().navigate(R.id.viewApodActivity, Bundle().apply {
             putString(ViewApodActivity.EXTRA_APOD_DATE, apod.date)
         })
+    }
+
+    private fun setupObservers() {
+        viewModel.apodList.observe(viewLifecycleOwner, Observer {
+            progressBar.visibility = View.GONE
+            adapter.submitList(it)
+        })
+    }
+
+    private fun showDatePicker() {
+        MaterialDatePicker.Builder.datePicker()
+            .setCalendarConstraints(
+                CalendarConstraints.Builder()
+                    .setEnd(Calendar.getInstance().timeInMillis)
+                    .setValidator(object : CalendarConstraints.DateValidator {
+                        override fun writeToParcel(dest: Parcel?, flags: Int) {
+
+                        }
+
+                        override fun isValid(date: Long): Boolean {
+                            return date <= Calendar.getInstance().timeInMillis
+                        }
+
+                        override fun describeContents(): Int {
+                            return 0
+                        }
+
+                    })
+                    .build()
+
+            )
+            .build().apply {
+                addOnPositiveButtonClickListener {
+                    findNavController().navigate(R.id.viewApodActivity, Bundle().apply {
+                        val selectedDate =
+                            LocalDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneOffset.UTC)
+                                .toLocalDate().format(
+                                    DateTimeFormatter.ofPattern(APOD.DATE_FORMAT)
+                                )
+                        putString(ViewApodActivity.EXTRA_APOD_DATE, selectedDate)
+                    })
+                }
+            }
+            .show(childFragmentManager, "ApodListFragment")
     }
 
 }

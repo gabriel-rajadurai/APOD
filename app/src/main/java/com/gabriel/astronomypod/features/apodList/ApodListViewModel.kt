@@ -18,7 +18,7 @@ class ApodListViewModel @Inject constructor(app: Application) : BaseViewModel(ap
             apodRepo.fetchAstronomyPictures(
                 LocalDate.now().minusDays(30).format(DateTimeFormatter.ofPattern(APOD.DATE_FORMAT)),
                 LocalDate.now().format(DateTimeFormatter.ofPattern(APOD.DATE_FORMAT))
-            )
+            )?.sortedByDescending { it.date }
         )
     }
 }

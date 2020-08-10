@@ -15,6 +15,6 @@ interface ApodDAO {
     @Query("Select * from apod_table where date=:date ")
     suspend fun getApodByDate(date: String): APOD?
 
-    @Query("Select * from apod_table where date between :fromDate and :endDate")
-    suspend fun getApods(fromDate: String, endDate: String): List<APOD>?
+    @Query("Select * from apod_table")
+    suspend fun getApods(): List<APOD>?
 }
