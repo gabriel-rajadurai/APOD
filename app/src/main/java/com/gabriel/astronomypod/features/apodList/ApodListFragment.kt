@@ -21,6 +21,7 @@ import com.gabriel.astronomypod.R
 import com.gabriel.astronomypod.common.PermissionManager
 import com.gabriel.astronomypod.common.VerticalSpacesItemDecoration
 import com.gabriel.astronomypod.common.ViewModelFactory
+import com.gabriel.astronomypod.common.gone
 import com.gabriel.astronomypod.features.viewApod.ViewApodActivity
 import com.gabriel.data.models.APOD
 import com.google.android.material.datepicker.CalendarConstraints
@@ -54,8 +55,8 @@ class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener {
         super.onViewCreated(view, savedInstanceState)
         rvApod.addItemDecoration(VerticalSpacesItemDecoration(20))
         rvApod.adapter = adapter
+        loadingView.startLoadAnimation()
         setupObservers()
-
         fabDate.setOnClickListener {
             showDatePicker()
         }
@@ -119,6 +120,8 @@ class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener {
 
     private fun setupObservers() {
         viewModel.apodList.observe(viewLifecycleOwner, Observer {
+            loadingView.stopLoadAnimation()
+            loadingView.gone()
             progressBar.visibility = View.GONE
             adapter.submitList(it)
         })

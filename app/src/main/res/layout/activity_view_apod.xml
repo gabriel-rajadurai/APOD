@@ -22,16 +22,24 @@
             <com.google.android.material.appbar.CollapsingToolbarLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed"
                 app:contentScrim="?colorPrimary"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
                 app:titleEnabled="false">
+
+                <com.gabriel.astronomypod.common.LoadingView
+                    android:id="@+id/loadingView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center" />
 
                 <ImageView
                     android:id="@+id/ivApod"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:minHeight="400dp"
+                    android:scaleType="center"
+                    android:visibility="gone"
                     app:layout_collapseMode="none" />
+
 
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar"

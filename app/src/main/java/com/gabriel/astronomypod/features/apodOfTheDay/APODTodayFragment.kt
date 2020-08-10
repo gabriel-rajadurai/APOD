@@ -10,26 +10,16 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.gabriel.astronomypod.ApodApplication
 import com.gabriel.astronomypod.R
-import com.gabriel.astronomypod.common.ScaleType
-import com.gabriel.astronomypod.common.loadUrl
-import com.gabriel.astronomypod.common.onComplete
-import com.gabriel.astronomypod.common.visible
+import com.gabriel.astronomypod.common.*
+import kotlinx.android.synthetic.main.apod_list_fragment.*
 import kotlinx.android.synthetic.main.apod_today_fragment.*
+import kotlinx.android.synthetic.main.apod_today_fragment.loadingView
 import javax.inject.Inject
 
 class APODTodayFragment : Fragment() {
 
     @Inject
     lateinit var viewModel: APODTodayViewModel
-    private val anim1 by lazy {
-        ivShape1.animate().rotationBy(360f).setDuration(1000)
-    }
-    private val anim2 by lazy {
-        ivShape2.animate().rotationBy(360f).setDuration(1000)
-    }
-    private val anim3 by lazy {
-        ivShape3.animate().rotationBy(360f).setDuration(1000)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,16 +41,7 @@ class APODTodayFragment : Fragment() {
     }
 
     private fun startLoadAnimation() {
-        anim1.onComplete {
-            anim2.start()
-            anim2.onComplete {
-                anim3.start()
-                anim3.onComplete {
-                    anim1.start()
-                }
-            }
-        }
-        anim1.start()
+        loadingView.startLoadAnimation()
     }
 
     private fun setupObservers() {
@@ -74,9 +55,8 @@ class APODTodayFragment : Fragment() {
     }
 
     private fun stopLoadAnimation() {
-        anim1.cancel()
-        anim2.cancel()
-        anim3.cancel()
+        loadingView.gone()
+        loadingView.stopLoadAnimation()
     }
 
 }

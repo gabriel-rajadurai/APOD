@@ -15,13 +15,12 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.gabriel.astronomypod.ApodApplication
 import com.gabriel.astronomypod.R
-import com.gabriel.astronomypod.common.PermissionManager
-import com.gabriel.astronomypod.common.ScaleType
-import com.gabriel.astronomypod.common.ViewModelFactory
-import com.gabriel.astronomypod.common.loadUrl
+import com.gabriel.astronomypod.common.*
 import com.gabriel.astronomypod.databinding.ActivityViewApodBinding
 import com.gabriel.data.models.APOD
 import kotlinx.android.synthetic.main.activity_view_apod.*
+import kotlinx.android.synthetic.main.activity_view_apod.loadingView
+import kotlinx.android.synthetic.main.apod_list_fragment.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -45,7 +44,7 @@ class ViewApodActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding?.lifecycleOwner = this
         binding?.model = viewModel
-
+        loadingView.startLoadAnimation()
         viewModel.fetchApod(apodDate)
         setupObservers()
     }
@@ -85,8 +84,14 @@ class ViewApodActivity : AppCompatActivity() {
     private fun setupObservers() {
         viewModel.currentApod.observe(this, Observer {
             it?.let { apod ->
+                ivApod.visible()
+                loadingView.stopLoadAnimation()
+                loadingView.gone()
                 if (apod.mediaType == APOD.MEDIA_TYPE_IMAGE)
                     ivApod.loadUrl(apod.hdUrl ?: apod.url)
+                else {
+                    ivApod.setImageResource(R.drawable.ic_play)
+                }
             }
         })
     }
