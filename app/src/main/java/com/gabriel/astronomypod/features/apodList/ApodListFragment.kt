@@ -28,13 +28,14 @@ class ApodListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        rvApod.addItemDecoration(VerticalSpacesItemDecoration(16))
+        rvApod.addItemDecoration(VerticalSpacesItemDecoration(20))
         rvApod.adapter = adapter
         setupObservers()
     }
 
     private fun setupObservers() {
         viewModel.apodlist.observe(viewLifecycleOwner, Observer {
+            progressBar.visibility = View.GONE
             adapter.submitList(it)
         })
     }

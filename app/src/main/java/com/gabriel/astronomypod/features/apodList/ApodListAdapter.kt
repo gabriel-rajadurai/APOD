@@ -1,15 +1,13 @@
 package com.gabriel.astronomypod.features.apodList
 
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.gabriel.astronomypod.R
+import com.gabriel.astronomypod.common.loadUrl
 import com.gabriel.data.models.APOD
 import kotlinx.android.synthetic.main.item_apod.view.*
 
@@ -30,10 +28,19 @@ class ApodListAdapter : ListAdapter<APOD, ApodListAdapter.ViewHolder>(DIFF_CALLB
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(apod: APOD) {
-            Glide.with(itemView)
-                .load(Uri.parse(apod.url))
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(itemView.ivApod)
+            itemView.tvTitle.text = apod.title
+            if (apod.mediaType == APOD.MEDIA_TYPE_IMAGE) {
+                itemView.ivApod.loadUrl(apod.url)
+                itemView.ivDownload.visibility = View.VISIBLE
+            } else {
+                itemView.ivApod.setImageResource(R.drawable.ic_play)
+                itemView.ivDownload.visibility = View.GONE
+            }
+            itemView.tvDate.text = apod.date
+            itemView.tvDescription.text = apod.explanation
+            itemView.tvTitle.setOnClickListener {
+                itemView.infoLayout.visibility = View.VISIBLE
+            }
         }
 
     }
