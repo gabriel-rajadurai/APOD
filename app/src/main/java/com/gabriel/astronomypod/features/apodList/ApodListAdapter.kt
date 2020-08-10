@@ -53,7 +53,7 @@ class ApodListAdapter(private val listener: ApodItemListener) :
                 itemView.infoLayout.gone()
 
             if (apod.mediaType == APOD.MEDIA_TYPE_IMAGE) {
-                itemView.ivApod.loadUrl(apod.url, ScaleType.CENTER_CROP)
+                itemView.ivApod.loadUrl(apod.url, ScaleType.CENTER_CROP){}
                 itemView.ivDownload.visible()
             } else {
                 itemView.ivApod.setImageResource(R.drawable.ic_play)

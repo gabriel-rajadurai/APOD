@@ -3,27 +3,23 @@ package com.gabriel.astronomypod.features.viewApod
 import android.app.DownloadManager
 import android.content.Context
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.view.Menu
 import android.view.MenuItem
 import android.webkit.MimeTypeMap
-import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ShareCompat
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import com.gabriel.astronomypod.ApodApplication
 import com.gabriel.astronomypod.R
-import com.gabriel.astronomypod.common.*
+import com.gabriel.astronomypod.common.PermissionManager
+import com.gabriel.astronomypod.common.gone
+import com.gabriel.astronomypod.common.loadUrl
+import com.gabriel.astronomypod.common.visible
 import com.gabriel.astronomypod.databinding.ActivityViewApodBinding
 import com.gabriel.data.models.APOD
 import kotlinx.android.synthetic.main.activity_view_apod.*
-import kotlinx.android.synthetic.main.activity_view_apod.ivApod
-import kotlinx.android.synthetic.main.activity_view_apod.loadingView
-import kotlinx.android.synthetic.main.apod_list_fragment.*
-import kotlinx.android.synthetic.main.apod_today_fragment.*
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ViewApodActivity : AppCompatActivity() {
@@ -90,11 +86,14 @@ class ViewApodActivity : AppCompatActivity() {
         viewModel.currentApod.observe(this, Observer {
             it?.let { apod ->
                 ivApod.visible()
-                loadingView.stopLoadAnimation()
-                loadingView.gone()
                 if (apod.mediaType == APOD.MEDIA_TYPE_IMAGE)
-                    ivApod.loadUrl(apod.hdUrl ?: apod.url)
+                    ivApod.loadUrl(apod.hdUrl ?: apod.url) {
+                        loadingView.stopLoadAnimation()
+                        loadingView.gone()
+                    }
                 else {
+                    loadingView.stopLoadAnimation()
+                    loadingView.gone()
                     ivApod.setImageResource(R.drawable.ic_play)
                 }
             }

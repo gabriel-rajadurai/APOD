@@ -11,8 +11,11 @@ import androidx.navigation.fragment.findNavController
 import com.gabriel.astronomypod.ApodApplication
 import com.gabriel.astronomypod.R
 import com.gabriel.astronomypod.common.*
+import com.gabriel.data.models.APOD
+import kotlinx.android.synthetic.main.activity_view_apod.*
 import kotlinx.android.synthetic.main.apod_list_fragment.*
 import kotlinx.android.synthetic.main.apod_today_fragment.*
+import kotlinx.android.synthetic.main.apod_today_fragment.ivApod
 import kotlinx.android.synthetic.main.apod_today_fragment.loadingView
 import javax.inject.Inject
 
@@ -47,9 +50,16 @@ class APODTodayFragment : Fragment() {
     private fun setupObservers() {
         viewModel.apodOfTheDay.observe(viewLifecycleOwner, Observer {
             it?.let { apod ->
-                stopLoadAnimation()
                 btDiscoverMore.visible()
-                ivApod.loadUrl(apod.hdUrl ?: apod.url, ScaleType.CENTER_CROP)
+                if (apod.mediaType == APOD.MEDIA_TYPE_IMAGE)
+                    ivApod.loadUrl(apod.hdUrl ?: apod.url, ScaleType.CENTER_CROP) {
+                        stopLoadAnimation()
+                    }
+                else {
+                    ivApod.setImageResource(R.drawable.ic_play)
+                    loadingView.stopLoadAnimation()
+                    loadingView.gone()
+                }
             }
         })
     }

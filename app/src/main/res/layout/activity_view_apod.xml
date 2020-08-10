@@ -26,20 +26,19 @@
                 app:layout_scrollFlags="scroll|exitUntilCollapsed"
                 app:titleEnabled="false">
 
-                <com.gabriel.astronomypod.common.LoadingView
-                    android:id="@+id/loadingView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center" />
 
                 <ImageView
                     android:id="@+id/ivApod"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:scaleType="center"
                     android:visibility="gone"
                     app:layout_collapseMode="none" />
 
+                <com.gabriel.astronomypod.common.LoadingView
+                    android:id="@+id/loadingView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center" />
 
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar"
@@ -47,7 +46,8 @@
                     android:layout_height="?attr/actionBarSize"
                     android:layout_gravity="top"
                     app:layout_collapseMode="pin"
-                    app:title="@{model.title}" />
+                    app:title="@{model.title}"
+                    app:titleTextColor="?android:textColorPrimary" />
 
 
             </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -71,6 +71,7 @@
                     android:minLines="6"
                     android:padding="18dp"
                     android:text="@{model.explanation}"
+                    android:textColor="?android:textColorPrimary"
                     android:textSize="16sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -83,6 +84,7 @@
                     android:layout_height="wrap_content"
                     android:padding="18dp"
                     android:text="@{model.date}"
+                    android:textColor="?android:textColorPrimary"
                     android:textSize="15sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tvDescription"
