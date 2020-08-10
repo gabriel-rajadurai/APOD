@@ -123,7 +123,6 @@ class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener {
         viewModel.apodList.observe(viewLifecycleOwner, Observer {
             loadingView.stopLoadAnimation()
             loadingView.gone()
-            progressBar.visibility = View.GONE
             adapter.submitList(it)
         })
     }

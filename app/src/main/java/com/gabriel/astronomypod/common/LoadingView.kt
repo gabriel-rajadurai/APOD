@@ -3,6 +3,7 @@ package com.gabriel.astronomypod.common
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.animation.AnimationUtils
 import android.widget.FrameLayout
 import com.gabriel.astronomypod.R
 import kotlinx.android.synthetic.main.layout_loading.view.*
@@ -18,13 +19,16 @@ class LoadingView : FrameLayout {
     )
 
     private val anim1 by lazy {
-        ivShape1.animate().rotationBy(360f).setDuration(1000)
+        AnimationUtils.loadAnimation(context, R.anim.rotate_animation)
+            .apply { fillAfter = true }
     }
     private val anim2 by lazy {
-        ivShape2.animate().rotationBy(360f).setDuration(1000)
+        AnimationUtils.loadAnimation(context, R.anim.rotate_animation)
+            .apply { fillAfter = true }
     }
     private val anim3 by lazy {
-        ivShape3.animate().rotationBy(360f).setDuration(1000)
+        AnimationUtils.loadAnimation(context, R.anim.rotate_animation)
+            .apply { fillAfter = true }
     }
 
     init {
@@ -32,16 +36,21 @@ class LoadingView : FrameLayout {
     }
 
     fun startLoadAnimation() {
+
+        ivShape3.startAnimation(anim1)
+
         anim1.onComplete {
-            anim2.start()
+            ivShape3.clearAnimation()
+            ivShape1.startAnimation(anim2)
             anim2.onComplete {
-                anim3.start()
+                ivShape1.clearAnimation()
+                ivShape2.startAnimation(anim3)
                 anim3.onComplete {
-                    anim1.start()
+                    ivShape2.clearAnimation()
+                    ivShape3.startAnimation(anim1)
                 }
             }
         }
-        anim1.start()
     }
 
     fun setLoadingText(loadingMessage: String) {
@@ -49,9 +58,12 @@ class LoadingView : FrameLayout {
     }
 
     fun stopLoadAnimation() {
-        anim1.cancel()
-        anim2.cancel()
-        anim3.cancel()
+        anim1.setAnimationListener(null)
+        ivShape3.clearAnimation()
+        anim2.setAnimationListener(null)
+        ivShape1.clearAnimation()
+        anim3.setAnimationListener(null)
+        ivShape2.clearAnimation()
     }
 
 }

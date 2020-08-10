@@ -50,23 +50,24 @@ class APODTodayFragment : Fragment() {
     private fun setupObservers() {
         viewModel.apodOfTheDay.observe(viewLifecycleOwner, Observer {
             it?.let { apod ->
-                btDiscoverMore.visible()
                 if (apod.mediaType == APOD.MEDIA_TYPE_IMAGE)
                     ivApod.loadUrl(apod.hdUrl ?: apod.url, ScaleType.CENTER_CROP) {
                         stopLoadAnimation()
+                        btDiscoverMore.visible()
                     }
                 else {
                     ivApod.setImageResource(R.drawable.ic_play)
                     loadingView.stopLoadAnimation()
                     loadingView.gone()
+                    btDiscoverMore.visible()
                 }
             }
         })
     }
 
     private fun stopLoadAnimation() {
-        loadingView.gone()
         loadingView.stopLoadAnimation()
+        loadingView.gone()
     }
 
 }

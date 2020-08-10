@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.view.View
 import android.view.ViewPropertyAnimator
+import android.view.animation.Animation
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -28,7 +29,7 @@ fun ImageView.loadUrl(
                 ScaleType.FIT_CENTER -> fitCenter()
                 ScaleType.CENTER_INSIDE -> centerInside()
                 ScaleType.NONE -> {
-                    dontTransform()
+                    //Do nothing
                 }
             }
         }
@@ -73,16 +74,19 @@ fun View.visible() {
     visibility = View.VISIBLE
 }
 
-fun ViewPropertyAnimator.onComplete(complete: () -> Unit) {
-    setListener(object : Animator.AnimatorListener {
-        override fun onAnimationRepeat(animation: Animator?) {}
+fun Animation.onComplete(complete: () -> Unit) {
+    setAnimationListener(object : Animation.AnimationListener {
+        override fun onAnimationRepeat(animation: Animation?) {
 
-        override fun onAnimationEnd(animation: Animator?) {
+        }
+
+        override fun onAnimationEnd(animation: Animation?) {
             complete()
         }
 
-        override fun onAnimationCancel(animation: Animator?) {}
+        override fun onAnimationStart(animation: Animation?) {
 
-        override fun onAnimationStart(animation: Animator?) {}
+        }
+
     })
 }
