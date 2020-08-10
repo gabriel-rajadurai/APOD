@@ -53,7 +53,7 @@ class ApodListAdapter(private val listener: ApodItemListener) :
                 itemView.infoLayout.gone()
 
             if (apod.mediaType == APOD.MEDIA_TYPE_IMAGE) {
-                itemView.ivApod.loadUrl(apod.url, ScaleType.CENTER_CROP){}
+                itemView.ivApod.loadUrl(apod.url, ScaleType.CENTER_CROP) {}
                 itemView.ivDownload.visible()
             } else {
                 itemView.ivApod.setImageResource(R.drawable.ic_play)
@@ -76,7 +76,7 @@ class ApodListAdapter(private val listener: ApodItemListener) :
 
             itemView.ivDownload.setOnClickListener { listener.downloadApod(apod) }
             itemView.ivShare.setOnClickListener { listener.shareApod(apod) }
-            itemView.ivOpen.setOnClickListener { listener.shareApod(apod) }
+            itemView.ivOpen.setOnClickListener { listener.viewApod(apod) }
             itemView.ivApod.setOnClickListener { listener.viewApod(apod) }
         }
 
