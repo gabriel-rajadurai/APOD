@@ -18,10 +18,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.gabriel.astronomypod.ApodApplication
 import com.gabriel.astronomypod.R
-import com.gabriel.astronomypod.common.PermissionManager
-import com.gabriel.astronomypod.common.VerticalSpacesItemDecoration
-import com.gabriel.astronomypod.common.ViewModelFactory
-import com.gabriel.astronomypod.common.gone
+import com.gabriel.astronomypod.common.*
 import com.gabriel.astronomypod.features.viewApod.ViewApodActivity
 import com.gabriel.data.models.APOD
 import com.google.android.material.datepicker.CalendarConstraints
@@ -123,6 +120,8 @@ class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener {
         viewModel.apodList.observe(viewLifecycleOwner, Observer {
             loadingView.stopLoadAnimation()
             loadingView.gone()
+            rvApod.visible()
+            fabDate.visible()
             adapter.submitList(it)
         })
     }

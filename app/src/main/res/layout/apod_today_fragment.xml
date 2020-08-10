@@ -11,24 +11,39 @@
         android:id="@+id/loadingView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center" />
 
     <ImageView
         android:id="@+id/ivApod"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <TextView
+        android:id="@+id/tvTodayPicture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Today's Picture"
+        android:textSize="18sp"
+        android:padding="18dp"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:layout_gravity="center_horizontal"
+        android:textColor="?android:textColorPrimary"/>
+
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btDiscoverMore"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        app:cornerRadius="10dp"
         android:layout_gravity="bottom|center_horizontal"
-        android:layout_margin="16dp"
-        android:minWidth="200dp"
-        android:text="Discover more"
+        android:layout_margin="24dp"
+        android:text="@string/discover_more"
+        android:textColor="@color/white"
         android:visibility="gone"
-        app:strokeColor="?colorPrimary"
-        app:strokeWidth="2dp" />
+        app:strokeColor="@color/white"
+        app:strokeWidth="1dp"
+        tools:visibility="visible" />
 
 </FrameLayout>

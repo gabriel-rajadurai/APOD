@@ -12,8 +12,10 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:orientation="vertical"
+        android:visibility="gone"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_apod" />
+        tools:listitem="@layout/item_apod"
+        tools:visibility="visible" />
 
     <com.gabriel.astronomypod.common.LoadingView
         android:id="@+id/loadingView"
@@ -21,12 +23,15 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fabDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="18dp"
-        android:src="@drawable/ic_date" />
+        android:layout_margin="20dp"
+        android:text="Date"
+        android:visibility="gone"
+        app:icon="@drawable/ic_date"
+        tools:visibility="visible" />
 
 </FrameLayout>

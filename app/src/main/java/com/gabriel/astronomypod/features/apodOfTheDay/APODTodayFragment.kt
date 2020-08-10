@@ -54,12 +54,14 @@ class APODTodayFragment : Fragment() {
                     ivApod.loadUrl(apod.hdUrl ?: apod.url, ScaleType.CENTER_CROP) {
                         stopLoadAnimation()
                         btDiscoverMore.visible()
+                        tvTodayPicture.visible()
                     }
                 else {
                     ivApod.setImageResource(R.drawable.ic_play)
                     loadingView.stopLoadAnimation()
                     loadingView.gone()
                     btDiscoverMore.visible()
+                    tvTodayPicture.visible()
                 }
             }
         })
