@@ -1,7 +1,6 @@
 package com.gabriel.astronomypod.features.apodList
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -10,8 +9,10 @@ import com.gabriel.astronomypod.R
 import com.gabriel.astronomypod.common.gone
 import com.gabriel.astronomypod.common.loadUrl
 import com.gabriel.astronomypod.common.visible
+import com.gabriel.astronomypod.databinding.ItemApodBinding
 import com.gabriel.data.models.APOD
 import kotlinx.android.synthetic.main.item_apod.view.*
+import org.jetbrains.annotations.NotNull
 
 class ApodListAdapter : ListAdapter<APOD, ApodListAdapter.ViewHolder>(DIFF_CALLBACK) {
 
@@ -19,8 +20,11 @@ class ApodListAdapter : ListAdapter<APOD, ApodListAdapter.ViewHolder>(DIFF_CALLB
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_apod, parent, false)
+            ItemApodBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
         )
     }
 
@@ -30,11 +34,17 @@ class ApodListAdapter : ListAdapter<APOD, ApodListAdapter.ViewHolder>(DIFF_CALLB
         }
     }
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(private val binding: ItemApodBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(apod: APOD) {
-            itemView.tvTitle.text = apod.title
-            if (previousExpandedItem == adapterPosition) itemView.infoLayout.visible()
-            else itemView.infoLayout.gone()
+
+            binding.apod = apod
+
+            if (previousExpandedItem == adapterPosition)
+                itemView.infoLayout.visible()
+            else
+                itemView.infoLayout.gone()
+
             if (apod.mediaType == APOD.MEDIA_TYPE_IMAGE) {
                 itemView.ivApod.loadUrl(apod.url)
                 itemView.ivDownload.visible()
@@ -42,8 +52,7 @@ class ApodListAdapter : ListAdapter<APOD, ApodListAdapter.ViewHolder>(DIFF_CALLB
                 itemView.ivApod.setImageResource(R.drawable.ic_play)
                 itemView.ivDownload.gone()
             }
-            itemView.tvDate.text = apod.date
-            itemView.tvDescription.text = apod.explanation
+
             itemView.tvTitle.setOnClickListener {
                 if (previousExpandedItem == adapterPosition) {
                     itemView.infoLayout.gone()
@@ -64,7 +73,7 @@ class ApodListAdapter : ListAdapter<APOD, ApodListAdapter.ViewHolder>(DIFF_CALLB
     companion object {
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<APOD>() {
             override fun areItemsTheSame(oldItem: APOD, newItem: APOD): Boolean {
-                return oldItem.url == newItem.url // Add
+                return oldItem.date == newItem.date
             }
 
             override fun areContentsTheSame(oldItem: APOD, newItem: APOD): Boolean {
