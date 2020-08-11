@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_main"
+    app:startDestination="@id/apodTodayFragment">
+
+    <fragment
+        android:id="@+id/apodListFragment"
+        android:name="com.gabriel.astronomypod.features.apodList.ApodListFragment"
+        android:label="apod_list_fragment"
+        tools:layout="@layout/apod_list_fragment" />
+
+    <activity
+        android:id="@+id/viewApodActivity"
+        android:name="com.gabriel.astronomypod.features.viewApod.ViewApodActivity"
+        android:label="ViewApodActivity"
+        tools:layout="@layout/activity_view_apod" />
+    <fragment
+        android:id="@+id/apodTodayFragment"
+        android:name="com.gabriel.astronomypod.features.apodOfTheDay.APODTodayFragment"
+        android:label="apod_today_fragment"
+        tools:layout="@layout/apod_today_fragment" />
+</navigation>
