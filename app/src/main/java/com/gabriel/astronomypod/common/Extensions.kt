@@ -1,12 +1,9 @@
 package com.gabriel.astronomypod.common
 
-import android.animation.Animator
-import android.animation.ObjectAnimator
 import android.app.Application
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.view.View
-import android.view.ViewPropertyAnimator
 import android.view.animation.Animation
 import android.widget.ImageView
 import androidx.annotation.StringRes

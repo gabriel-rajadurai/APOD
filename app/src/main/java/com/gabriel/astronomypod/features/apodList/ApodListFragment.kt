@@ -64,7 +64,6 @@ class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener {
 
     override fun onStart() {
         super.onStart()
-        viewModel.fetchApodList()
     }
 
     override fun onRequestPermissionsResult(
@@ -130,20 +129,20 @@ class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener {
     }
 
     private fun setupObservers() {
-        viewModel.apodList.observe(viewLifecycleOwner, Observer {
+        viewModel.fetchApodList().observe(viewLifecycleOwner, Observer {
             loadingView.stopLoadAnimation()
             loadingView.gone()
             tvError.gone()
             rvApod.visible()
             fabDate.visible()
             adapter.submitList(it)
-        })
-        viewModel.error.observe(viewLifecycleOwner, Observer {
-            loadingView.gone()
-            tvError.visible()
-            rvApod.gone()
-            fabDate.gone()
-            tvError.text = it
+            if (it.isEmpty()) {
+                loadingView.gone()
+                tvError.visible()
+                rvApod.gone()
+                fabDate.gone()
+                tvError.text = getString(R.string.error_unable_to_fetch)
+            }
         })
     }
 

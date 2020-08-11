@@ -1,5 +1,6 @@
 package com.gabriel.data.repos
 
+import androidx.lifecycle.LiveData
 import com.gabriel.data.datasources.defs.APODDataSourceDef
 import com.gabriel.data.datasources.impl.local.APODLocalDataSource
 import com.gabriel.data.datasources.impl.remote.APODRemoteDataSource
@@ -15,20 +16,20 @@ class ApodRepo @Inject constructor() : APODDataSourceDef {
     lateinit var apodLocalDs: APODLocalDataSource
 
     override suspend fun fetchAstronomyPictureOfTheDay(): APOD? {
-        return apodLocalDs.fetchAstronomyPictureOfTheDay()?.also {
-            apodLocalDs.saveApodsToDb(it)
-        } ?: apodRemoteDs.fetchAstronomyPictureOfTheDay()
+        return apodLocalDs.fetchAstronomyPictureOfTheDay()
+            ?: apodRemoteDs.fetchAstronomyPictureOfTheDay()?.also {
+                apodLocalDs.saveApodsToDb(it)
+            }
     }
 
     override suspend fun fetchAstronomyPictures(fromDate: String, endDate: String): List<APOD>? {
-        val apodsLocal = apodLocalDs.fetchAstronomyPictures(fromDate, endDate)
-        return if (!apodsLocal.isNullOrEmpty()) {
-            apodsLocal
-        } else {
-            apodRemoteDs.fetchAstronomyPictures(fromDate, endDate)?.also {
-                apodLocalDs.saveApodsToDb(*it.toTypedArray())
-            }
+        return apodRemoteDs.fetchAstronomyPictures(fromDate, endDate)?.also {
+            apodLocalDs.saveApodsToDb(*it.toTypedArray())
         }
+    }
+
+    override fun fetchAstronomyPicturesLive(): LiveData<List<APOD>> {
+        return apodLocalDs.fetchAstronomyPicturesLive()
     }
 
     override suspend fun fetchAstronomyPictureByDate(date: String): APOD? {

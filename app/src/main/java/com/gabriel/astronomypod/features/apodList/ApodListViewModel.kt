@@ -1,6 +1,7 @@
 package com.gabriel.astronomypod.features.apodList
 
 import android.app.Application
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
@@ -20,21 +21,20 @@ class ApodListViewModel @Inject constructor(app: Application) : BaseViewModel(ap
 
     @Inject
     lateinit var apodRepo: ApodRepo
-    val apodList = MutableLiveData<List<APOD>?>()
-    var error = MutableLiveData<String>()
 
-    fun fetchApodList() {
+    fun fetchApodList(): LiveData<List<APOD>> {
         viewModelScope.launch {
             try {
-                apodList.value = apodRepo.fetchAstronomyPictures(
+                apodRepo.fetchAstronomyPictures(
                     LocalDate.now().minusDays(30)
                         .format(DateTimeFormatter.ofPattern(APOD.DATE_FORMAT)),
                     LocalDate.now().format(DateTimeFormatter.ofPattern(APOD.DATE_FORMAT))
-                )?.sortedByDescending { it.date }
+                )
             } catch (e: Exception) {
-                error.value = getString(R.string.error_unable_to_fetch)
+                e.printStackTrace()
             }
         }
+        return apodRepo.fetchAstronomyPicturesLive()
     }
 
     suspend fun fetchApod(date: String) = suspendCoroutine<APOD?> {
