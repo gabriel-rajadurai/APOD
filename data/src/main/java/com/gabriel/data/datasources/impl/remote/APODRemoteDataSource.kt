@@ -23,12 +23,7 @@ class APODRemoteDataSource @Inject constructor(
 
     override suspend fun fetchAstronomyPictureOfTheDay(): APOD? {
         return suspendCoroutine {
-
-            apodNetworkService.fetchAstronomyPictureByDate(
-                ZonedDateTime.now(ZoneOffset.MIN).format(
-                    DateTimeFormatter.ofPattern(APOD.DATE_FORMAT)
-                )
-            ).enqueue(object : Callback<APOD> {
+            apodNetworkService.fetchAstronomyPictureOfTheDay().enqueue(object : Callback<APOD> {
                 override fun onFailure(call: Call<APOD>, t: Throwable) {
                     t.printStackTrace()
                     it.resume(null)

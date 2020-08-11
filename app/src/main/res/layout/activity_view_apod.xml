@@ -32,7 +32,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:visibility="gone"
-                    android:scaleType="centerCrop"
                     app:layout_collapseMode="none" />
 
                 <TextView
@@ -75,6 +74,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
+                <View
+                    android:id="@+id/divider"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:background="@color/white"/>
 
                 <TextView
                     android:id="@+id/tvDescription"
@@ -87,7 +94,7 @@
                     android:textSize="16sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/divider"
                     tools:text="Description" />
 
                 <TextView

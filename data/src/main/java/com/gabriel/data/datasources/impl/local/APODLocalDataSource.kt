@@ -4,18 +4,14 @@ import androidx.lifecycle.LiveData
 import com.gabriel.data.datasources.ApodDAO
 import com.gabriel.data.datasources.defs.APODDataSourceDef
 import com.gabriel.data.models.APOD
-import java.time.ZoneOffset
-import java.time.ZonedDateTime
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class APODLocalDataSource(private val apodDao: ApodDAO) : APODDataSourceDef {
 
-
     override suspend fun fetchAstronomyPictureOfTheDay(): APOD? {
         return apodDao.getApodByDate(
-            ZonedDateTime.now(ZoneOffset.MIN).format(
-                DateTimeFormatter.ofPattern(APOD.DATE_FORMAT)
-            )
+            LocalDate.now().format(DateTimeFormatter.ofPattern(APOD.DATE_FORMAT))
         )
     }
 
