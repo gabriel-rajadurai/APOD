@@ -30,7 +30,8 @@ class APODRemoteDataSource @Inject constructor(
                 )
             ).enqueue(object : Callback<APOD> {
                 override fun onFailure(call: Call<APOD>, t: Throwable) {
-                    it.resumeWithException(t)
+                    t.printStackTrace()
+                    it.resume(null)
                 }
 
                 override fun onResponse(call: Call<APOD>, response: Response<APOD>) {
@@ -48,7 +49,8 @@ class APODRemoteDataSource @Inject constructor(
             apodNetworkService.fetchAstronomyPictures(fromDate, endDate)
                 .enqueue(object : Callback<List<APOD>> {
                     override fun onFailure(call: Call<List<APOD>>, t: Throwable) {
-                        it.resumeWithException(t)
+                        t.printStackTrace()
+                        it.resume(null)
                     }
 
                     override fun onResponse(
@@ -70,7 +72,8 @@ class APODRemoteDataSource @Inject constructor(
             apodNetworkService.fetchAstronomyPictureByDate(date)
                 .enqueue(object : Callback<APOD> {
                     override fun onFailure(call: Call<APOD>, t: Throwable) {
-                        it.resumeWithException(t)
+                        t.printStackTrace()
+                        it.resume(null)
                     }
 
                     override fun onResponse(call: Call<APOD>, response: Response<APOD>) {

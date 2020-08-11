@@ -22,7 +22,7 @@ class ApodListViewModel @Inject constructor(app: Application) : BaseViewModel(ap
     @Inject
     lateinit var apodRepo: ApodRepo
 
-    fun fetchApodList(): LiveData<List<APOD>> {
+    fun fetchApodsFromServer() {
         viewModelScope.launch {
             try {
                 apodRepo.fetchAstronomyPictures(
@@ -34,12 +34,14 @@ class ApodListViewModel @Inject constructor(app: Application) : BaseViewModel(ap
                 e.printStackTrace()
             }
         }
+    }
+
+    fun fetchApodList(): LiveData<List<APOD>> {
+        fetchApodsFromServer()
         return apodRepo.fetchAstronomyPicturesLive()
     }
 
-    suspend fun fetchApod(date: String) = suspendCoroutine<APOD?> {
-        viewModelScope.launch {
-            it.resume(apodRepo.fetchAstronomyPictureByDate(date))
-        }
-    }
+    suspend fun fetchApod(date: String) = apodRepo.fetchAstronomyPictureByDate(date)
+
+
 }

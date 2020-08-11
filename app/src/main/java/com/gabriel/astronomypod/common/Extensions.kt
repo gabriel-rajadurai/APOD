@@ -1,6 +1,7 @@
 package com.gabriel.astronomypod.common
 
 import android.app.Application
+import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.view.View
@@ -14,6 +15,9 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.BaseTransientBottomBar.Duration
+import com.google.android.material.snackbar.Snackbar
 
 fun ImageView.loadUrl(
     url: String,
@@ -91,3 +95,7 @@ fun Animation.onComplete(complete: () -> Unit) {
 }
 
 fun AndroidViewModel.getString(@StringRes res: Int) = getApplication<Application>().getString(res)
+
+fun View.snackBar(message: String, @Duration duration: Int) {
+    Snackbar.make(this, message, duration).show()
+}
