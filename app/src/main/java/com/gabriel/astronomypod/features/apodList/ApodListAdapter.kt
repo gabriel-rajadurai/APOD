@@ -2,6 +2,7 @@ package com.gabriel.astronomypod.features.apodList
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -49,13 +50,27 @@ class ApodListAdapter(private val listener: ApodItemListener) :
         fun bind(apod: APOD) {
 
             binding.apod = apod.copy(
-                date = LocalDate.parse(apod.date).format(DateTimeFormatter.ofPattern("MMM dd, YYYY"))
+                date = LocalDate.parse(apod.date)
+                    .format(DateTimeFormatter.ofPattern("MMM dd, YYYY"))
             )
 
-            if (previousExpandedItem == adapterPosition)
+            if (previousExpandedItem == adapterPosition) {
                 itemView.infoLayout.visible()
-            else
+                itemView.tvTitle.setCompoundDrawablesWithIntrinsicBounds(
+                    null,
+                    null,
+                    ContextCompat.getDrawable(itemView.context, R.drawable.ic_collapse),
+                    null
+                )
+            } else {
                 itemView.infoLayout.gone()
+                itemView.tvTitle.setCompoundDrawablesWithIntrinsicBounds(
+                    null,
+                    null,
+                    ContextCompat.getDrawable(itemView.context, R.drawable.ic_expand),
+                    null
+                )
+            }
 
             if (apod.mediaType == APOD.MEDIA_TYPE_IMAGE) {
                 itemView.ivApod.loadUrl(apod.url, ScaleType.CENTER_CROP) {}
@@ -69,6 +84,7 @@ class ApodListAdapter(private val listener: ApodItemListener) :
                 if (previousExpandedItem == adapterPosition) {
                     itemView.infoLayout.gone()
                     previousExpandedItem = -1
+                    notifyItemChanged(adapterPosition)
                     return@setOnClickListener
                 }
 
@@ -76,7 +92,7 @@ class ApodListAdapter(private val listener: ApodItemListener) :
                     notifyItemChanged(previousExpandedItem)
 
                 previousExpandedItem = adapterPosition
-                itemView.infoLayout.visible()
+                notifyItemChanged(adapterPosition)
             }
 
             itemView.ivDownload.setOnClickListener { listener.downloadApod(apod) }
