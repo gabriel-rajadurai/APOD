@@ -14,7 +14,6 @@ import com.gabriel.astronomypod.common.gone
 import com.gabriel.astronomypod.common.loadUrl
 import com.gabriel.astronomypod.common.visible
 import com.gabriel.data.models.APOD
-import kotlinx.android.synthetic.main.apod_list_fragment.*
 import kotlinx.android.synthetic.main.apod_today_fragment.*
 import kotlinx.android.synthetic.main.apod_today_fragment.loadingView
 import kotlinx.android.synthetic.main.apod_today_fragment.tvError
@@ -52,6 +51,8 @@ class APODTodayFragment : Fragment() {
         viewModel.apodOfTheDay.observe(viewLifecycleOwner, Observer {
             it?.let { apod ->
                 tvError.gone()
+                tvTitle.text = apod.title
+                tvDescription.text = apod.explanation
                 if (apod.mediaType == APOD.MEDIA_TYPE_IMAGE)
                     ivApod.loadUrl(apod.hdUrl ?: apod.url, ScaleType.CENTER_CROP) {
                         stopLoadAnimation()
