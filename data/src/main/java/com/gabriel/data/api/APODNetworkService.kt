@@ -8,7 +8,7 @@ import retrofit2.http.Query
 interface APODNetworkService {
 
     @GET("apod")
-    fun fetchAstronomyPictureOfTheDay(): Call<APOD>
+    fun fetchAstronomyPictureOfTheDay(): Call<APOD> // TODO Issue in API -> Returns null during early hours of the day
 
     @GET("apod")
     fun fetchAstronomyPictures(

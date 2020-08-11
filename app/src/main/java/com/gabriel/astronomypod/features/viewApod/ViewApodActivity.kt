@@ -20,6 +20,9 @@ import com.gabriel.astronomypod.common.visible
 import com.gabriel.astronomypod.databinding.ActivityViewApodBinding
 import com.gabriel.data.models.APOD
 import kotlinx.android.synthetic.main.activity_view_apod.*
+import kotlinx.android.synthetic.main.activity_view_apod.loadingView
+import kotlinx.android.synthetic.main.activity_view_apod.tvError
+import kotlinx.android.synthetic.main.apod_list_fragment.*
 import javax.inject.Inject
 
 class ViewApodActivity : AppCompatActivity() {
@@ -86,6 +89,8 @@ class ViewApodActivity : AppCompatActivity() {
         viewModel.currentApod.observe(this, Observer {
             it?.let { apod ->
                 ivApod.visible()
+                tvError.gone()
+                infoLayout.visible()
                 if (apod.mediaType == APOD.MEDIA_TYPE_IMAGE)
                     ivApod.loadUrl(apod.hdUrl ?: apod.url) {
                         loadingView.stopLoadAnimation()
@@ -96,6 +101,11 @@ class ViewApodActivity : AppCompatActivity() {
                     loadingView.gone()
                     ivApod.setImageResource(R.drawable.ic_play)
                 }
+            } ?: run {
+                loadingView.gone()
+                tvError.visible()
+                ivApod.gone()
+                infoLayout.gone()
             }
         })
     }

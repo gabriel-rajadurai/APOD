@@ -2,12 +2,15 @@ package com.gabriel.astronomypod.common
 
 import android.animation.Animator
 import android.animation.ObjectAnimator
+import android.app.Application
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.view.View
 import android.view.ViewPropertyAnimator
 import android.view.animation.Animation
 import android.widget.ImageView
+import androidx.annotation.StringRes
+import androidx.lifecycle.AndroidViewModel
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -87,6 +90,7 @@ fun Animation.onComplete(complete: () -> Unit) {
         override fun onAnimationStart(animation: Animation?) {
 
         }
-
     })
 }
+
+fun AndroidViewModel.getString(@StringRes res: Int) = getApplication<Application>().getString(res)

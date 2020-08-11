@@ -4,19 +4,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.gabriel.astronomypod.ApodApplication
 import com.gabriel.astronomypod.R
-import com.gabriel.astronomypod.common.*
+import com.gabriel.astronomypod.common.ScaleType
+import com.gabriel.astronomypod.common.gone
+import com.gabriel.astronomypod.common.loadUrl
+import com.gabriel.astronomypod.common.visible
 import com.gabriel.data.models.APOD
-import kotlinx.android.synthetic.main.activity_view_apod.*
 import kotlinx.android.synthetic.main.apod_list_fragment.*
 import kotlinx.android.synthetic.main.apod_today_fragment.*
-import kotlinx.android.synthetic.main.apod_today_fragment.ivApod
 import kotlinx.android.synthetic.main.apod_today_fragment.loadingView
+import kotlinx.android.synthetic.main.apod_today_fragment.tvError
 import javax.inject.Inject
 
 class APODTodayFragment : Fragment() {
@@ -50,6 +51,7 @@ class APODTodayFragment : Fragment() {
     private fun setupObservers() {
         viewModel.apodOfTheDay.observe(viewLifecycleOwner, Observer {
             it?.let { apod ->
+                tvError.gone()
                 if (apod.mediaType == APOD.MEDIA_TYPE_IMAGE)
                     ivApod.loadUrl(apod.hdUrl ?: apod.url, ScaleType.CENTER_CROP) {
                         stopLoadAnimation()
@@ -64,9 +66,18 @@ class APODTodayFragment : Fragment() {
                     tvTodayPicture.visible()
                 }
             } ?: run {
+                if (viewModel.error.value.isNullOrBlank()) {
+                    tvError.visible()
+                    tvError.text = getString(R.string.error_unable_to_fetch)
+                }
                 stopLoadAnimation()
                 btDiscoverMore.visible()
             }
+        })
+        viewModel.error.observe(viewLifecycleOwner, Observer {
+            loadingView.gone()
+            tvError.visible()
+            tvError.text = it
         })
     }
 

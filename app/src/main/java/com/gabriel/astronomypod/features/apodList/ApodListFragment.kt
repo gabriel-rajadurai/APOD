@@ -10,27 +10,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.MimeTypeMap
-import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.app.ShareCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.gabriel.astronomypod.ApodApplication
 import com.gabriel.astronomypod.R
-import com.gabriel.astronomypod.common.*
+import com.gabriel.astronomypod.common.PermissionManager
+import com.gabriel.astronomypod.common.VerticalSpacesItemDecoration
+import com.gabriel.astronomypod.common.gone
+import com.gabriel.astronomypod.common.visible
 import com.gabriel.astronomypod.features.viewApod.ViewApodActivity
 import com.gabriel.data.models.APOD
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.MaterialDatePicker
 import kotlinx.android.synthetic.main.apod_list_fragment.*
 import kotlinx.android.synthetic.main.apod_list_fragment.loadingView
-import kotlinx.android.synthetic.main.apod_today_fragment.*
 import kotlinx.coroutines.launch
 import java.time.Instant
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -134,9 +133,17 @@ class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener {
         viewModel.apodList.observe(viewLifecycleOwner, Observer {
             loadingView.stopLoadAnimation()
             loadingView.gone()
+            tvError.gone()
             rvApod.visible()
             fabDate.visible()
             adapter.submitList(it)
+        })
+        viewModel.error.observe(viewLifecycleOwner, Observer {
+            loadingView.gone()
+            tvError.visible()
+            rvApod.gone()
+            fabDate.gone()
+            tvError.text = it
         })
     }
 
