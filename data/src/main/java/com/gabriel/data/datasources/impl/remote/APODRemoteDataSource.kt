@@ -1,20 +1,13 @@
 package com.gabriel.data.datasources.impl.remote
 
 import com.gabriel.data.api.APODNetworkService
-import com.gabriel.data.api.APODRetrofitHelper
 import com.gabriel.data.datasources.defs.APODDataSourceDef
 import com.gabriel.data.models.APOD
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.ZoneOffset
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 class APODRemoteDataSource @Inject constructor(
