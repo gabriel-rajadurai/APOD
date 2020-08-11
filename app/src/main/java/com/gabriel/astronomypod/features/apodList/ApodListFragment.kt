@@ -216,7 +216,6 @@ class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener,
     }
 
     override fun onNetworkConnected() {
-        snackMessage(R.string.connection_available)
         refreshLayout.isEnabled = true
         refreshLayout.setOnRefreshListener {
             viewModel.fetchApodsFromServer()
