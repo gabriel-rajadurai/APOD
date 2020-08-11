@@ -7,6 +7,11 @@ import com.gabriel.data.models.APOD
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -18,19 +23,23 @@ class APODRemoteDataSource @Inject constructor(
 
     override suspend fun fetchAstronomyPictureOfTheDay(): APOD? {
         return suspendCoroutine {
-            apodNetworkService.fetchAstronomyPictureOfTheDay()
-                .enqueue(object : Callback<APOD> {
-                    override fun onFailure(call: Call<APOD>, t: Throwable) {
-                        it.resumeWithException(t)
-                    }
 
-                    override fun onResponse(call: Call<APOD>, response: Response<APOD>) {
-                        if (response.isSuccessful)
-                            it.resume(response.body())
-                        else
-                            it.resume(null)
-                    }
-                })
+            apodNetworkService.fetchAstronomyPictureByDate(
+                ZonedDateTime.now(ZoneOffset.MIN).format(
+                    DateTimeFormatter.ofPattern(APOD.DATE_FORMAT)
+                )
+            ).enqueue(object : Callback<APOD> {
+                override fun onFailure(call: Call<APOD>, t: Throwable) {
+                    it.resumeWithException(t)
+                }
+
+                override fun onResponse(call: Call<APOD>, response: Response<APOD>) {
+                    if (response.isSuccessful)
+                        it.resume(response.body())
+                    else
+                        it.resume(null)
+                }
+            })
         }
     }
 

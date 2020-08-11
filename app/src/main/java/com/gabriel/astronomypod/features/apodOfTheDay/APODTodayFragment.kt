@@ -63,6 +63,9 @@ class APODTodayFragment : Fragment() {
                     btDiscoverMore.visible()
                     tvTodayPicture.visible()
                 }
+            } ?: run {
+                stopLoadAnimation()
+                btDiscoverMore.visible()
             }
         })
     }
