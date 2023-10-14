@@ -14,10 +14,10 @@ import androidx.annotation.StringRes
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.app.ShareCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.gabriel.astronomypod.ApodApplication
 import com.gabriel.astronomypod.R
 import com.gabriel.astronomypod.common.*
 import com.gabriel.astronomypod.features.viewApod.ViewApodActivity
@@ -25,8 +25,7 @@ import com.gabriel.data.models.APOD
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.apod_list_fragment.*
-import kotlinx.android.synthetic.main.apod_list_fragment.loadingView
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDateTime
@@ -34,36 +33,29 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.inject.Inject
+import com.gabriel.astronomypod.databinding.ApodListFragmentBinding
+import com.google.android.material.datepicker.DateValidatorPointBackward
 
+@AndroidEntryPoint
 class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener,
     NetworkStateReceiver.NetworkStateListener {
 
-    @Inject
-    lateinit var viewModel: ApodListViewModel
+    lateinit var binding: ApodListFragmentBinding
+
+    private val viewModel: ApodListViewModel by viewModels()
     private val adapter by lazy { ApodListAdapter(this) }
     private val permissionManager by lazy { PermissionManager(this) }
+
     private val networkStateReceiver by lazy {
         NetworkStateReceiver(requireContext(), this)
     }
+
     private val datePicker by lazy {
         MaterialDatePicker.Builder.datePicker()
             .setCalendarConstraints(
                 CalendarConstraints.Builder()
                     .setEnd(Calendar.getInstance().timeInMillis)
-                    .setValidator(object : CalendarConstraints.DateValidator {
-                        override fun writeToParcel(dest: Parcel?, flags: Int) {
-
-                        }
-
-                        override fun isValid(date: Long): Boolean {
-                            return date <= Calendar.getInstance().timeInMillis
-                        }
-
-                        override fun describeContents(): Int {
-                            return 0
-                        }
-
-                    })
+                    .setValidator(DateValidatorPointBackward.now())
                     .build()
 
             ).build()
@@ -72,18 +64,22 @@ class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener,
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        (requireActivity().application as ApodApplication).appGraph.inject(this)
-        return inflater.inflate(R.layout.apod_list_fragment, container, false)
+    ): View {
+        binding = ApodListFragmentBinding.inflate(
+            inflater,
+            container,
+            false
+        )
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        rvApod.addItemDecoration(VerticalSpacesItemDecoration(20))
-        rvApod.adapter = adapter
+        binding.rvApod.addItemDecoration(VerticalSpacesItemDecoration(20))
+        binding.rvApod.adapter = adapter
         startLoadingAnimation()
         setupObservers()
-        fabDate.setOnClickListener {
+        binding.fabDate.setOnClickListener {
             selectDate()
         }
     }
@@ -162,26 +158,30 @@ class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener,
 
     private fun setupObservers() {
         viewModel.fetchApodList().observe(viewLifecycleOwner, Observer {
-            refreshLayout.isRefreshing = false
-            loadingView.stopLoadAnimation()
-            loadingView.gone()
-            tvError.gone()
-            rvApod.visible()
-            fabDate.visible()
-            adapter.submitList(it)
-            if (it.isEmpty()) {
+            with(binding) {
+                refreshLayout.isRefreshing = false
+                loadingView.stopLoadAnimation()
                 loadingView.gone()
-                tvError.visible()
-                rvApod.gone()
-                fabDate.gone()
-                tvError.text = getString(R.string.error_unable_to_fetch)
+                tvError.gone()
+                rvApod.visible()
+                fabDate.visible()
+                adapter.submitList(it)
+                if (it.isEmpty()) {
+                    loadingView.gone()
+                    tvError.visible()
+                    rvApod.gone()
+                    fabDate.gone()
+                    tvError.text = getString(R.string.error_unable_to_fetch)
+                }
             }
         })
     }
 
     private fun startLoadingAnimation() {
-        loadingView.startLoadAnimation()
-        loadingView.setLoadingText(getString(R.string.loading))
+        with(binding) {
+            loadingView.startLoadAnimation()
+            loadingView.setLoadingText(getString(R.string.loading))
+        }
     }
 
     private fun selectDate() {
@@ -202,23 +202,27 @@ class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener,
     }
 
     private fun snackMessage(@StringRes messageResId: Int) {
-        root.snackBar(
+        binding.root.snackBar(
             getString(messageResId),
             Snackbar.LENGTH_SHORT
         )
     }
 
     override fun onNetworkLost() {
-        snackMessage(R.string.connection_lost)
-        refreshLayout.setOnRefreshListener(null)
-        refreshLayout.isEnabled = false
-        refreshLayout.isRefreshing = false
+        with(binding) {
+            snackMessage(R.string.connection_lost)
+            refreshLayout.setOnRefreshListener(null)
+            refreshLayout.isEnabled = false
+            refreshLayout.isRefreshing = false
+        }
     }
 
     override fun onNetworkConnected() {
-        refreshLayout.isEnabled = true
-        refreshLayout.setOnRefreshListener {
-            viewModel.fetchApodsFromServer()
+        with(binding) {
+            refreshLayout.isEnabled = true
+            refreshLayout.setOnRefreshListener {
+                viewModel.fetchApodsFromServer()
+            }
         }
     }
 

@@ -1,6 +1,10 @@
 package com.gabriel.astronomypod.common
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
+import android.content.Context
+import androidx.annotation.StringRes
 
-open class BaseViewModel(app: Application) : AndroidViewModel(app)
+open class BaseViewModel(private val app: Context) : ViewModel(){
+
+    protected fun getString(@StringRes res: Int) = app.getString(res)
+}

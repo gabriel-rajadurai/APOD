@@ -5,21 +5,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.gabriel.astronomypod.ApodApplication
 import com.gabriel.astronomypod.R
 import com.gabriel.astronomypod.common.*
 import com.gabriel.data.models.APOD
-import kotlinx.android.synthetic.main.apod_today_fragment.*
-import kotlinx.android.synthetic.main.apod_today_fragment.loadingView
-import kotlinx.android.synthetic.main.apod_today_fragment.tvError
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import com.gabriel.astronomypod.databinding.ApodTodayFragmentBinding
 
+@AndroidEntryPoint
 class APODTodayFragment : Fragment(), NetworkStateReceiver.NetworkStateListener {
 
-    @Inject
-    lateinit var viewModel: APODTodayViewModel
+    lateinit var binding : ApodTodayFragmentBinding
+    private val viewModel: APODTodayViewModel by viewModels()
     private val networkStateReceiver by lazy {
         NetworkStateReceiver(requireContext(), this)
     }
@@ -28,8 +28,12 @@ class APODTodayFragment : Fragment(), NetworkStateReceiver.NetworkStateListener 
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        (requireActivity().application as ApodApplication).appGraph.inject(this)
-        return inflater.inflate(R.layout.apod_today_fragment, container, false)
+        binding = ApodTodayFragmentBinding.inflate(
+            inflater,
+            container,
+            false
+        )
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -38,7 +42,7 @@ class APODTodayFragment : Fragment(), NetworkStateReceiver.NetworkStateListener 
         viewModel.fetchApodOfTheDay()
         setupObservers()
 
-        btDiscoverMore.setOnClickListener {
+        binding.btDiscoverMore.setOnClickListener {
             findNavController().navigate(R.id.apodListFragment)
         }
         startLoadAnimation()
@@ -56,67 +60,77 @@ class APODTodayFragment : Fragment(), NetworkStateReceiver.NetworkStateListener 
 
     private fun startLoadAnimation() {
         stopLoadAnimation()
-        tvError.gone()
-        tvTodayPicture.gone()
-        tvTitle.gone()
-        tvDescription.gone()
-        btDiscoverMore.gone()
-        loadingView.visible()
-        loadingView.startLoadAnimation()
-        loadingView.setLoadingText(getString(R.string.load_today_picture))
+        with(binding){
+            tvError.gone()
+            tvTodayPicture.gone()
+            tvTitle.gone()
+            tvDescription.gone()
+            btDiscoverMore.gone()
+            loadingView.visible()
+            loadingView.startLoadAnimation()
+            loadingView.setLoadingText(getString(R.string.load_today_picture))
+        }
     }
 
     private fun setupObservers() {
         viewModel.apodOfTheDay.observe(viewLifecycleOwner, Observer {
-            it?.let { apod ->
-                tvError.gone()
-                tvTitle.text = apod.title
-                tvDescription.text = apod.explanation
+            with(binding){
+                it?.let { apod ->
+                    tvError.gone()
+                    tvTitle.text = apod.title
+                    tvDescription.text = apod.explanation
 
-                if (apod.mediaType == APOD.MEDIA_TYPE_IMAGE)
-                    ivApod.loadUrl(apod.hdUrl ?: apod.url, ScaleType.CENTER_CROP) {
+                    if (apod.mediaType == APOD.MEDIA_TYPE_IMAGE)
+                        ivApod.loadUrl(apod.hdUrl ?: apod.url, ScaleType.CENTER_CROP) {
+                            stopLoadAnimation()
+                            tvTitle.visible()
+                            tvDescription.visible()
+                            btDiscoverMore.visible()
+                            tvTodayPicture.visible()
+                        }
+                    else {
+                        ivApod.setImageResource(R.drawable.ic_play)
                         stopLoadAnimation()
                         tvTitle.visible()
                         tvDescription.visible()
                         btDiscoverMore.visible()
                         tvTodayPicture.visible()
                     }
-                else {
-                    ivApod.setImageResource(R.drawable.ic_play)
+                } ?: run {
+                    if (viewModel.error.value.isNullOrBlank()) {
+                        tvError.visible()
+                        tvTitle.gone()
+                        tvDescription.gone()
+                        tvError.text = getString(R.string.error_unable_to_fetch)
+                    }
                     stopLoadAnimation()
-                    tvTitle.visible()
-                    tvDescription.visible()
-                    btDiscoverMore.visible()
-                    tvTodayPicture.visible()
                 }
-            } ?: run {
-                if (viewModel.error.value.isNullOrBlank()) {
-                    tvError.visible()
-                    tvTitle.gone()
-                    tvDescription.gone()
-                    tvError.text = getString(R.string.error_unable_to_fetch)
-                }
-                stopLoadAnimation()
             }
         })
         viewModel.error.observe(viewLifecycleOwner, Observer {
-            loadingView.gone()
-            tvError.visible()
-            tvError.text = it
+            with(binding){
+                loadingView.gone()
+                tvError.visible()
+                tvError.text = it
+            }
         })
     }
 
     private fun stopLoadAnimation() {
-        loadingView.stopLoadAnimation()
-        loadingView.gone()
+        with(binding){
+            loadingView.stopLoadAnimation()
+            loadingView.gone()
+        }
     }
 
     override fun onNetworkLost() {
         if(viewModel.apodOfTheDay.value == null) {
-            tvError.visible()
-            tvTitle.gone()
-            tvDescription.gone()
-            tvError.text = getString(R.string.error_unable_to_fetch)
+            with(binding){
+                tvError.visible()
+                tvTitle.gone()
+                tvDescription.gone()
+                tvError.text = getString(R.string.error_unable_to_fetch)
+            }
             stopLoadAnimation()
         }
     }

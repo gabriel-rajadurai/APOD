@@ -7,21 +7,23 @@ import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.gabriel.astronomypod.R
 import com.gabriel.astronomypod.common.BaseViewModel
-import com.gabriel.astronomypod.common.getString
 import com.gabriel.data.models.APOD
 import com.gabriel.data.repos.ApodRepo
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import dagger.hilt.android.qualifiers.ApplicationContext
+import android.content.Context
 
-class ApodListViewModel @Inject constructor(app: Application) : BaseViewModel(app) {
-
-    @Inject
-    lateinit var apodRepo: ApodRepo
-
+@HiltViewModel
+class ApodListViewModel @Inject constructor(
+    @ApplicationContext app : Context,
+    private val apodRepo: ApodRepo
+) : BaseViewModel(app) {
     fun fetchApodsFromServer() {
         viewModelScope.launch {
             try {

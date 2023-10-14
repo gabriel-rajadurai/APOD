@@ -93,9 +93,6 @@ fun Animation.onComplete(complete: () -> Unit) {
         }
     })
 }
-
-fun AndroidViewModel.getString(@StringRes res: Int) = getApplication<Application>().getString(res)
-
 fun View.snackBar(message: String, @Duration duration: Int) {
     Snackbar.make(this, message, duration).show()
 }

@@ -1,20 +1,29 @@
 package com.gabriel.data.dagger.modules
 
 import android.app.Application
+import android.content.Context
 import androidx.room.Room
 import com.gabriel.data.datasources.ApodDAO
 import com.gabriel.data.datasources.ApodDatabase
 import com.gabriel.data.datasources.impl.local.APODLocalDataSource
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
-class APODRoomModule(app: Application) {
+@InstallIn(SingletonComponent::class)
+class APODRoomModule {
 
-    private val database by lazy {
-        Room.databaseBuilder(
-            app,
+    @Singleton
+    @Provides
+    fun provideApodDatabase(
+        @ApplicationContext context: Context
+    ): ApodDatabase {
+        return Room.databaseBuilder(
+            context,
             ApodDatabase::class.java,
             "Apod_Database"
         ).build()
@@ -22,13 +31,15 @@ class APODRoomModule(app: Application) {
 
     @Singleton
     @Provides
-    fun provideApodDatabase() = database
+    fun provideApodDao(
+        database: ApodDatabase
+    ): ApodDAO {
+        return database.apodDao()
+    }
 
     @Singleton
     @Provides
-    fun provideApodDao() = database.apodDao()
-
-    @Singleton
-    @Provides
-    fun provideApodLocalDataSource(dao: ApodDAO) = APODLocalDataSource(dao)
+    fun provideApodLocalDataSource(dao: ApodDAO): APODLocalDataSource {
+        return APODLocalDataSource(dao)
+    }
 }

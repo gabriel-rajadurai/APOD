@@ -6,17 +6,21 @@ import androidx.lifecycle.viewModelScope
 import com.gabriel.astronomypod.common.BaseViewModel
 import com.gabriel.data.models.APOD
 import com.gabriel.data.repos.ApodRepo
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
+import dagger.hilt.android.qualifiers.ApplicationContext
+import android.content.Context
 
-class ViewApodViewModel @Inject constructor(val app: Application) :
-    BaseViewModel(app) {
+@HiltViewModel
+class ViewApodViewModel @Inject constructor(
+    @ApplicationContext app : Context,
+    private val apodRepo: ApodRepo
+) : BaseViewModel(app) {
 
-    @Inject
-    lateinit var apodRepo: ApodRepo
     val title = MutableLiveData<String>()
     val explanation = MutableLiveData<String>()
     val date = MutableLiveData<String>()

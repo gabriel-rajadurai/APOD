@@ -6,16 +6,20 @@ import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.gabriel.astronomypod.R
 import com.gabriel.astronomypod.common.BaseViewModel
-import com.gabriel.astronomypod.common.getString
 import com.gabriel.data.models.APOD
 import com.gabriel.data.repos.ApodRepo
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import dagger.hilt.android.qualifiers.ApplicationContext
+import android.content.Context
 
-class APODTodayViewModel @Inject constructor(app: Application) : BaseViewModel(app) {
+@HiltViewModel
+class APODTodayViewModel @Inject constructor(
+    @ApplicationContext app : Context,
+    private val apodRepo: ApodRepo
+) : BaseViewModel(app) {
 
-    @Inject
-    lateinit var apodRepo: ApodRepo
     var error = MutableLiveData<String>()
 
     val apodOfTheDay = MutableLiveData<APOD>()
