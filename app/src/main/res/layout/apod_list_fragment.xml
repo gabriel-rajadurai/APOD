@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
 
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="model"
+            type="com.gabriel.astronomypod.features.apodList.ApodListViewModel" />
+    </data>
+
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -19,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:orientation="vertical"
-                android:visibility="gone"
+                android:visibility="@{model.apodList.isEmpty() ? View.GONE : View.VISIBLE}"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/item_apod"
                 tools:visibility="visible" />
@@ -30,7 +39,8 @@
             android:id="@+id/loadingView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center" />
+            android:layout_gravity="center"
+            android:visibility="@{model.isLoading ? View.VISIBLE : View.GONE}" />
 
         <TextView
             android:id="@+id/tvError"
@@ -39,7 +49,7 @@
             android:layout_gravity="center"
             android:textAlignment="center"
             android:textColor="?android:textColorPrimary"
-            android:visibility="gone"
+            android:visibility="@{model.isError ? View.VISIBLE : View.GONE}"
             tools:text="Error" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton

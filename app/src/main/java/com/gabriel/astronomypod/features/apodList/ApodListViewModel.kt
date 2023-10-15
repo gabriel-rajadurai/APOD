@@ -1,11 +1,8 @@
 package com.gabriel.astronomypod.features.apodList
 
-import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
-import com.gabriel.astronomypod.R
 import com.gabriel.astronomypod.common.BaseViewModel
 import com.gabriel.data.models.APOD
 import com.gabriel.data.repos.ApodRepo
@@ -14,17 +11,38 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 import dagger.hilt.android.qualifiers.ApplicationContext
 import android.content.Context
+import androidx.lifecycle.switchMap
 
 @HiltViewModel
 class ApodListViewModel @Inject constructor(
-    @ApplicationContext app : Context,
+    @ApplicationContext app: Context,
     private val apodRepo: ApodRepo
 ) : BaseViewModel(app) {
-    fun fetchApodsFromServer() {
+
+    //UI States
+    val isLoading = MutableLiveData(true)
+    val isError = MutableLiveData(false)
+
+    private val _getAstronomyPictures = MutableLiveData<Boolean>()
+    val apodList = _getAstronomyPictures.switchMap {
+        fetchApodList()
+    }
+
+    fun getAstronomyPictures() {
+        isLoading.value = true
+        _getAstronomyPictures.value = true
+    }
+
+    suspend fun fetchApod(date: String) = apodRepo.fetchAstronomyPictureByDate(date)
+
+    private fun fetchApodList(): LiveData<List<APOD>> {
+        fetchApodsFromServer()
+        return apodRepo.fetchAstronomyPicturesLive()
+    }
+
+    private fun fetchApodsFromServer() {
         viewModelScope.launch {
             try {
                 apodRepo.fetchAstronomyPictures(
@@ -37,13 +55,5 @@ class ApodListViewModel @Inject constructor(
             }
         }
     }
-
-    fun fetchApodList(): LiveData<List<APOD>> {
-        fetchApodsFromServer()
-        return apodRepo.fetchAstronomyPicturesLive()
-    }
-
-    suspend fun fetchApod(date: String) = apodRepo.fetchAstronomyPictureByDate(date)
-
 
 }

@@ -3,6 +3,7 @@
 
     <data>
 
+        <import type="android.view.View"/>
         <variable
             name="model"
             type="com.gabriel.astronomypod.features.viewApod.ViewApodViewModel" />
@@ -48,6 +49,7 @@
                     android:id="@+id/loadingView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:visibility="@{model.isLoading ? View.VISIBLE : View.GONE}"
                     android:layout_gravity="center" />
 
                 <androidx.appcompat.widget.Toolbar

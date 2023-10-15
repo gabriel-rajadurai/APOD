@@ -17,9 +17,13 @@ import android.content.Context
 
 @HiltViewModel
 class ViewApodViewModel @Inject constructor(
-    @ApplicationContext app : Context,
+    @ApplicationContext app: Context,
     private val apodRepo: ApodRepo
 ) : BaseViewModel(app) {
+
+    //UI States
+    val isLoading = MutableLiveData(true)
+    val isError = MutableLiveData(false)
 
     val title = MutableLiveData<String>()
     val explanation = MutableLiveData<String>()
@@ -28,12 +32,17 @@ class ViewApodViewModel @Inject constructor(
     val currentApod = MutableLiveData<APOD>()
 
     fun fetchApod(date: String) {
+        isLoading.value = true
         viewModelScope.launch {
             currentApod.value = apodRepo.fetchAstronomyPictureByDate(date)?.also {
                 title.value = it.title
                 explanation.value = it.explanation
                 this@ViewApodViewModel.date.value =
                     LocalDate.parse(it.date).format(DateTimeFormatter.ofPattern("MMM dd, YYYY"))
+            } ?: run {
+                isLoading.value = false
+                isError.value = true
+                return@launch
             }
         }
     }

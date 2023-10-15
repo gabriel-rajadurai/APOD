@@ -3,14 +3,13 @@ package com.gabriel.astronomypod.features.apodList
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.gabriel.astronomypod.R
 import com.gabriel.astronomypod.common.ScaleType
-import com.gabriel.astronomypod.common.gone
 import com.gabriel.astronomypod.common.loadUrl
-import com.gabriel.astronomypod.common.visible
 import com.gabriel.astronomypod.databinding.ItemApodBinding
 import com.gabriel.data.models.APOD
 import java.time.LocalDate
@@ -53,7 +52,7 @@ class ApodListAdapter(private val listener: ApodItemListener) :
             )
 
             if (previousExpandedItem == adapterPosition) {
-                binding.infoLayout.visible()
+                binding.infoLayout.isVisible = true
                 binding.tvTitle.setCompoundDrawablesWithIntrinsicBounds(
                     null,
                     null,
@@ -61,7 +60,7 @@ class ApodListAdapter(private val listener: ApodItemListener) :
                     null
                 )
             } else {
-                binding.infoLayout.gone()
+                binding.infoLayout.isVisible = false
                 binding.tvTitle.setCompoundDrawablesWithIntrinsicBounds(
                     null,
                     null,
@@ -72,15 +71,15 @@ class ApodListAdapter(private val listener: ApodItemListener) :
 
             if (apod.mediaType == APOD.MEDIA_TYPE_IMAGE) {
                 binding.ivApod.loadUrl(apod.url, ScaleType.CENTER_CROP) {}
-                binding.ivDownload.visible()
+                binding.ivDownload.isVisible = true
             } else {
                 binding.ivApod.setImageResource(R.drawable.ic_play)
-                binding.ivDownload.gone()
+                binding.ivDownload.isVisible = false
             }
 
             binding.tvTitle.setOnClickListener {
                 if (previousExpandedItem == adapterPosition) {
-                    binding.infoLayout.gone()
+                    binding.infoLayout.isVisible = false
                     previousExpandedItem = -1
                     notifyItemChanged(adapterPosition)
                     return@setOnClickListener
