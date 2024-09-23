@@ -17,3 +17,4 @@ include(":app")
 include(":data")
 rootProject.name = "AstronomyPOD"
 include(":core")
+include(":apod-compose")
