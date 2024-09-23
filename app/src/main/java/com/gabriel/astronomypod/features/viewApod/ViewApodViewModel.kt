@@ -1,15 +1,13 @@
 package com.gabriel.astronomypod.features.viewApod
 
-import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.gabriel.astronomypod.common.BaseViewModel
+import com.gabriel.apod.core.BaseViewModel
 import com.gabriel.data.models.APOD
 import com.gabriel.data.repos.ApodRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import dagger.hilt.android.qualifiers.ApplicationContext
