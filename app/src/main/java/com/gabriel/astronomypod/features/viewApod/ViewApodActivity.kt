@@ -8,45 +8,40 @@ import android.os.Environment
 import android.view.Menu
 import android.view.MenuItem
 import android.webkit.MimeTypeMap
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ShareCompat
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
-import com.gabriel.astronomypod.ApodApplication
 import com.gabriel.astronomypod.R
 import com.gabriel.astronomypod.common.PermissionManager
-import com.gabriel.astronomypod.common.gone
 import com.gabriel.astronomypod.common.loadUrl
-import com.gabriel.astronomypod.common.visible
 import com.gabriel.astronomypod.databinding.ActivityViewApodBinding
 import com.gabriel.data.models.APOD
-import kotlinx.android.synthetic.main.activity_view_apod.*
-import kotlinx.android.synthetic.main.activity_view_apod.loadingView
-import kotlinx.android.synthetic.main.activity_view_apod.tvError
-import kotlinx.android.synthetic.main.apod_list_fragment.*
-import javax.inject.Inject
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ViewApodActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var viewModel: ViewApodViewModel
+    lateinit var binding: ActivityViewApodBinding
+
+    private val viewModel: ViewApodViewModel by viewModels()
     private val apodDate by lazy {
         intent?.extras?.getString(EXTRA_APOD_DATE)
             ?: throw IllegalArgumentException("APOD date cannot be null")
     }
     private val permissionManager by lazy { PermissionManager(this) }
-    private var binding: ActivityViewApodBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        (application as ApodApplication).appGraph.inject(this)
         super.onCreate(savedInstanceState)
         binding = ActivityViewApodBinding.inflate(layoutInflater)
-        setContentView(binding?.root)
+        setContentView(binding.root)
 
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        binding?.lifecycleOwner = this
-        binding?.model = viewModel
+        binding.lifecycleOwner = this
+        binding.model = viewModel
 
         startLoadingAnimation()
         viewModel.fetchApod(apodDate)
@@ -77,42 +72,50 @@ class ViewApodActivity : AppCompatActivity() {
             R.id.downloadApod -> {
                 downloadApod()
             }
+
             R.id.shareApod -> {
                 shareApod()
             }
+
             else -> return false
         }
         return true
     }
 
     private fun setupObservers() {
-        viewModel.currentApod.observe(this, Observer {
-            it?.let { apod ->
-                ivApod.visible()
-                tvError.gone()
-                infoLayout.visible()
-                if (apod.mediaType == APOD.MEDIA_TYPE_IMAGE)
-                    ivApod.loadUrl(apod.hdUrl ?: apod.url) {
-                        loadingView.stopLoadAnimation()
-                        loadingView.gone()
-                    }
-                else {
-                    loadingView.stopLoadAnimation()
-                    loadingView.gone()
-                    ivApod.setImageResource(R.drawable.ic_play)
-                }
-            } ?: run {
-                loadingView.gone()
-                tvError.visible()
-                ivApod.gone()
-                infoLayout.gone()
+        viewModel.isLoading.observe(this) { loading ->
+            if (loading) {
+                startLoadingAnimation()
+            } else {
+                binding.loadingView.stopLoadAnimation()
             }
-        })
+        }
+        viewModel.currentApod.observe(this) {
+            with(binding) {
+                it?.let { apod ->
+                    ivApod.isVisible = true
+                    infoLayout.isVisible = true
+                    if (apod.mediaType == APOD.MEDIA_TYPE_IMAGE) {
+                        ivApod.loadUrl(apod.hdUrl ?: apod.url) {
+                            viewModel.isLoading.value = false
+                        }
+                    } else {
+                        viewModel.isLoading.value = false
+                        ivApod.setImageResource(R.drawable.ic_play)
+                    }
+                } ?: run {
+                    ivApod.isVisible = false
+                    infoLayout.isVisible = false
+                }
+            }
+        }
     }
 
     private fun startLoadingAnimation() {
-        loadingView.startLoadAnimation()
-        loadingView.setLoadingText(getString(R.string.loading_media))
+        with(binding) {
+            loadingView.startLoadAnimation()
+            loadingView.setLoadingText(getString(R.string.loading_media))
+        }
     }
 
     private fun shareApod() {
@@ -128,33 +131,21 @@ class ViewApodActivity : AppCompatActivity() {
 
     private fun downloadApod() {
         viewModel.currentApod.value?.let { apod ->
-            permissionManager.requestPermissions(
-                PermissionManager.PERMISSION.STORAGE,
-                listener = object :
-                    PermissionManager.PermissionsRequestListener {
-                    override fun onPermissionGranted() {
-                        val ext = MimeTypeMap.getFileExtensionFromUrl(apod.hdUrl ?: apod.url)
-                        val downloadRequest =
-                            DownloadManager.Request(Uri.parse(apod.hdUrl ?: apod.url))
-                                .setDestinationInExternalPublicDir(
-                                    Environment.DIRECTORY_DOWNLOADS,
-                                    "APOD/${apod.title}_${apod.date}.$ext"
-                                )
-                                .setDescription("Downloading Image")
-                                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
-                                .setAllowedOverMetered(true)
-                                .setAllowedOverRoaming(true)
-                                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            val ext = MimeTypeMap.getFileExtensionFromUrl(apod.hdUrl ?: apod.url)
+            val downloadRequest =
+                DownloadManager.Request(Uri.parse(apod.hdUrl ?: apod.url))
+                    .setDestinationInExternalPublicDir(
+                        Environment.DIRECTORY_DOWNLOADS,
+                        "APOD/${apod.title}_${apod.date}.$ext"
+                    )
+                    .setDescription("Downloading Image")
+                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
+                    .setAllowedOverMetered(true)
+                    .setAllowedOverRoaming(true)
+                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
 
-                        val dm = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-                        dm.enqueue(downloadRequest)
-
-                    }
-
-                    override fun onPermissionDenied() {
-
-                    }
-                })
+            val dm = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            dm.enqueue(downloadRequest)
         }
     }
 

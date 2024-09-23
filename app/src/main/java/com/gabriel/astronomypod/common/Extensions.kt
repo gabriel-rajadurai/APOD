@@ -70,14 +70,6 @@ enum class ScaleType {
     CENTER_INSIDE
 }
 
-fun View.gone() {
-    visibility = View.GONE
-}
-
-fun View.visible() {
-    visibility = View.VISIBLE
-}
-
 fun Animation.onComplete(complete: () -> Unit) {
     setAnimationListener(object : Animation.AnimationListener {
         override fun onAnimationRepeat(animation: Animation?) {
@@ -93,9 +85,6 @@ fun Animation.onComplete(complete: () -> Unit) {
         }
     })
 }
-
-fun AndroidViewModel.getString(@StringRes res: Int) = getApplication<Application>().getString(res)
-
 fun View.snackBar(message: String, @Duration duration: Int) {
     Snackbar.make(this, message, duration).show()
 }

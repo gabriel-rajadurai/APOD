@@ -5,7 +5,6 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.os.Parcel
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,57 +12,52 @@ import android.webkit.MimeTypeMap
 import androidx.annotation.StringRes
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.app.ShareCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.gabriel.astronomypod.ApodApplication
 import com.gabriel.astronomypod.R
-import com.gabriel.astronomypod.common.*
+import com.gabriel.astronomypod.common.NetworkStateReceiver
+import com.gabriel.astronomypod.common.PermissionManager
+import com.gabriel.astronomypod.common.VerticalSpacesItemDecoration
+import com.gabriel.astronomypod.common.snackBar
+import com.gabriel.astronomypod.databinding.ApodListFragmentBinding
 import com.gabriel.astronomypod.features.viewApod.ViewApodActivity
 import com.gabriel.data.models.APOD
 import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.apod_list_fragment.*
-import kotlinx.android.synthetic.main.apod_list_fragment.loadingView
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
-import java.util.*
-import javax.inject.Inject
+import java.util.Calendar
 
+@AndroidEntryPoint
 class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener,
     NetworkStateReceiver.NetworkStateListener {
 
-    @Inject
-    lateinit var viewModel: ApodListViewModel
+    lateinit var binding: ApodListFragmentBinding
+
+    private val viewModel: ApodListViewModel by viewModels()
     private val adapter by lazy { ApodListAdapter(this) }
     private val permissionManager by lazy { PermissionManager(this) }
+
     private val networkStateReceiver by lazy {
         NetworkStateReceiver(requireContext(), this)
     }
+
     private val datePicker by lazy {
         MaterialDatePicker.Builder.datePicker()
             .setCalendarConstraints(
                 CalendarConstraints.Builder()
                     .setEnd(Calendar.getInstance().timeInMillis)
-                    .setValidator(object : CalendarConstraints.DateValidator {
-                        override fun writeToParcel(dest: Parcel?, flags: Int) {
-
-                        }
-
-                        override fun isValid(date: Long): Boolean {
-                            return date <= Calendar.getInstance().timeInMillis
-                        }
-
-                        override fun describeContents(): Int {
-                            return 0
-                        }
-
-                    })
+                    .setValidator(DateValidatorPointBackward.now())
                     .build()
 
             ).build()
@@ -72,20 +66,29 @@ class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener,
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        (requireActivity().application as ApodApplication).appGraph.inject(this)
-        return inflater.inflate(R.layout.apod_list_fragment, container, false)
+    ): View {
+        binding = ApodListFragmentBinding.inflate(
+            inflater,
+            container,
+            false
+        )
+        binding.lifecycleOwner = this
+        binding.model = viewModel
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        rvApod.addItemDecoration(VerticalSpacesItemDecoration(20))
-        rvApod.adapter = adapter
+        binding.rvApod.addItemDecoration(VerticalSpacesItemDecoration(20))
+        binding.rvApod.adapter = adapter
         startLoadingAnimation()
         setupObservers()
-        fabDate.setOnClickListener {
+        binding.fabDate.setOnClickListener {
             selectDate()
         }
+
+        //Get astronomy pictures
+        viewModel.getAstronomyPictures()
     }
 
     override fun onStart() {
@@ -98,6 +101,7 @@ class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener,
         networkStateReceiver.unregister()
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -117,35 +121,22 @@ class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener,
     }
 
     override fun downloadApod(apod: APOD) {
-        permissionManager.requestPermissions(
-            PermissionManager.PERMISSION.STORAGE,
-            listener = object :
-                PermissionManager.PermissionsRequestListener {
-                override fun onPermissionGranted() {
-                    val ext = MimeTypeMap.getFileExtensionFromUrl(apod.hdUrl ?: apod.url)
-                    val downloadRequest =
-                        DownloadManager.Request(Uri.parse(apod.hdUrl ?: apod.url))
-                            .setDestinationInExternalPublicDir(
-                                Environment.DIRECTORY_DOWNLOADS,
-                                "APOD/${apod.title}_${apod.date}.$ext"
-                            )
-                            .setDescription("Downloading Image")
-                            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
-                            .setAllowedOverMetered(true)
-                            .setAllowedOverRoaming(true)
-                            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+        val ext = MimeTypeMap.getFileExtensionFromUrl(apod.hdUrl ?: apod.url)
+        val downloadRequest =
+            DownloadManager.Request(Uri.parse(apod.hdUrl ?: apod.url))
+                .setDestinationInExternalPublicDir(
+                    Environment.DIRECTORY_DOWNLOADS,
+                    "APOD/${apod.title}_${apod.date}.$ext"
+                )
+                .setDescription("Downloading Image")
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
+                .setAllowedOverMetered(true)
+                .setAllowedOverRoaming(true)
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
 
-                    val dm =
-                        requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-                    dm.enqueue(downloadRequest)
-
-                }
-
-                override fun onPermissionDenied() {
-
-                }
-
-            })
+        val dm =
+            requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        dm.enqueue(downloadRequest)
     }
 
     override fun viewApod(apod: APOD) {
@@ -161,27 +152,33 @@ class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener,
     }
 
     private fun setupObservers() {
-        viewModel.fetchApodList().observe(viewLifecycleOwner, Observer {
-            refreshLayout.isRefreshing = false
-            loadingView.stopLoadAnimation()
-            loadingView.gone()
-            tvError.gone()
-            rvApod.visible()
-            fabDate.visible()
-            adapter.submitList(it)
-            if (it.isEmpty()) {
-                loadingView.gone()
-                tvError.visible()
-                rvApod.gone()
-                fabDate.gone()
-                tvError.text = getString(R.string.error_unable_to_fetch)
+        viewModel.isLoading.observe(viewLifecycleOwner) { loading ->
+            if (loading) {
+                binding.loadingView.startLoadAnimation()
+            } else {
+                binding.loadingView.stopLoadAnimation()
             }
-        })
+        }
+        viewModel.apodList.observe(viewLifecycleOwner) {
+            with(binding) {
+                refreshLayout.isRefreshing = false
+                viewModel.isLoading.value = false
+                fabDate.isVisible = true
+                adapter.submitList(it)
+                if (it.isEmpty()) {
+                    viewModel.isError.value = true
+                    fabDate.isVisible = false
+                    tvError.text = getString(R.string.error_unable_to_fetch)
+                }
+            }
+        }
     }
 
     private fun startLoadingAnimation() {
-        loadingView.startLoadAnimation()
-        loadingView.setLoadingText(getString(R.string.loading))
+        with(binding) {
+            loadingView.startLoadAnimation()
+            loadingView.setLoadingText(getString(R.string.loading))
+        }
     }
 
     private fun selectDate() {
@@ -202,23 +199,27 @@ class ApodListFragment : Fragment(), ApodListAdapter.ApodItemListener,
     }
 
     private fun snackMessage(@StringRes messageResId: Int) {
-        root.snackBar(
+        binding.root.snackBar(
             getString(messageResId),
             Snackbar.LENGTH_SHORT
         )
     }
 
     override fun onNetworkLost() {
-        snackMessage(R.string.connection_lost)
-        refreshLayout.setOnRefreshListener(null)
-        refreshLayout.isEnabled = false
-        refreshLayout.isRefreshing = false
+        with(binding) {
+            snackMessage(R.string.connection_lost)
+            refreshLayout.setOnRefreshListener(null)
+            refreshLayout.isEnabled = false
+            refreshLayout.isRefreshing = false
+        }
     }
 
     override fun onNetworkConnected() {
-        refreshLayout.isEnabled = true
-        refreshLayout.setOnRefreshListener {
-            viewModel.fetchApodsFromServer()
+        with(binding) {
+            refreshLayout.isEnabled = true
+            refreshLayout.setOnRefreshListener {
+                viewModel.getAstronomyPictures()
+            }
         }
     }
 

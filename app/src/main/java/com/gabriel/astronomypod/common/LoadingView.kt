@@ -6,16 +6,18 @@ import android.view.LayoutInflater
 import android.view.animation.AnimationUtils
 import android.widget.FrameLayout
 import com.gabriel.astronomypod.R
-import kotlinx.android.synthetic.main.layout_loading.view.*
+import com.gabriel.astronomypod.databinding.LayoutLoadingBinding
 
-class LoadingView : FrameLayout {
+class LoadingView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : FrameLayout(context, attrs, defStyleAttr) {
 
-    constructor(context: Context) : super(context)
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
+    private val binding: LayoutLoadingBinding = LayoutLoadingBinding.inflate(
+        LayoutInflater.from(context),
+        this,
+        true
     )
 
     private val anim1 by lazy {
@@ -31,39 +33,39 @@ class LoadingView : FrameLayout {
             .apply { fillAfter = true }
     }
 
-    init {
-        LayoutInflater.from(context).inflate(R.layout.layout_loading, this)
-    }
-
     fun startLoadAnimation() {
+        with(binding) {
+            ivShape3.startAnimation(anim1)
 
-        ivShape3.startAnimation(anim1)
-
-        anim1.onComplete {
-            ivShape3.clearAnimation()
-            ivShape1.startAnimation(anim2)
-            anim2.onComplete {
-                ivShape1.clearAnimation()
-                ivShape2.startAnimation(anim3)
-                anim3.onComplete {
-                    ivShape2.clearAnimation()
-                    ivShape3.startAnimation(anim1)
+            anim1.onComplete {
+                ivShape3.clearAnimation()
+                ivShape1.startAnimation(anim2)
+                anim2.onComplete {
+                    ivShape1.clearAnimation()
+                    ivShape2.startAnimation(anim3)
+                    anim3.onComplete {
+                        ivShape2.clearAnimation()
+                        ivShape3.startAnimation(anim1)
+                    }
                 }
             }
         }
+
     }
 
     fun setLoadingText(loadingMessage: String) {
-        loadText.text = loadingMessage
+        binding.loadText.text = loadingMessage
     }
 
     fun stopLoadAnimation() {
-        anim1.setAnimationListener(null)
-        ivShape3.clearAnimation()
-        anim2.setAnimationListener(null)
-        ivShape1.clearAnimation()
-        anim3.setAnimationListener(null)
-        ivShape2.clearAnimation()
+        with(binding) {
+            anim1.setAnimationListener(null)
+            ivShape3.clearAnimation()
+            anim2.setAnimationListener(null)
+            ivShape1.clearAnimation()
+            anim3.setAnimationListener(null)
+            ivShape2.clearAnimation()
+        }
     }
 
 }

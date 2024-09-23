@@ -4,22 +4,24 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.gabriel.astronomypod.ApodApplication
 import com.gabriel.astronomypod.R
-import com.gabriel.astronomypod.common.*
+import com.gabriel.astronomypod.common.NetworkStateReceiver
+import com.gabriel.astronomypod.common.ScaleType
+import com.gabriel.astronomypod.common.loadUrl
+import com.gabriel.astronomypod.databinding.ApodTodayFragmentBinding
 import com.gabriel.data.models.APOD
-import kotlinx.android.synthetic.main.apod_today_fragment.*
-import kotlinx.android.synthetic.main.apod_today_fragment.loadingView
-import kotlinx.android.synthetic.main.apod_today_fragment.tvError
-import javax.inject.Inject
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class APODTodayFragment : Fragment(), NetworkStateReceiver.NetworkStateListener {
 
-    @Inject
-    lateinit var viewModel: APODTodayViewModel
+    lateinit var binding: ApodTodayFragmentBinding
+    private val viewModel: APODTodayViewModel by viewModels()
     private val networkStateReceiver by lazy {
         NetworkStateReceiver(requireContext(), this)
     }
@@ -27,9 +29,15 @@ class APODTodayFragment : Fragment(), NetworkStateReceiver.NetworkStateListener 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        (requireActivity().application as ApodApplication).appGraph.inject(this)
-        return inflater.inflate(R.layout.apod_today_fragment, container, false)
+    ): View {
+        binding = ApodTodayFragmentBinding.inflate(
+            inflater,
+            container,
+            false
+        )
+        binding.lifecycleOwner = this
+        binding.model = viewModel
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -38,7 +46,7 @@ class APODTodayFragment : Fragment(), NetworkStateReceiver.NetworkStateListener 
         viewModel.fetchApodOfTheDay()
         setupObservers()
 
-        btDiscoverMore.setOnClickListener {
+        binding.btDiscoverMore.setOnClickListener {
             findNavController().navigate(R.id.apodListFragment)
         }
         startLoadAnimation()
@@ -56,73 +64,76 @@ class APODTodayFragment : Fragment(), NetworkStateReceiver.NetworkStateListener 
 
     private fun startLoadAnimation() {
         stopLoadAnimation()
-        tvError.gone()
-        tvTodayPicture.gone()
-        tvTitle.gone()
-        tvDescription.gone()
-        btDiscoverMore.gone()
-        loadingView.visible()
-        loadingView.startLoadAnimation()
-        loadingView.setLoadingText(getString(R.string.load_today_picture))
+        with(binding) {
+            tvTodayPicture.isVisible = false
+            tvTitle.isVisible = false
+            tvDescription.isVisible = false
+            btDiscoverMore.isVisible = false
+            loadingView.startLoadAnimation()
+            loadingView.setLoadingText(getString(R.string.load_today_picture))
+        }
     }
 
     private fun setupObservers() {
-        viewModel.apodOfTheDay.observe(viewLifecycleOwner, Observer {
-            it?.let { apod ->
-                tvError.gone()
-                tvTitle.text = apod.title
-                tvDescription.text = apod.explanation
-
-                if (apod.mediaType == APOD.MEDIA_TYPE_IMAGE)
-                    ivApod.loadUrl(apod.hdUrl ?: apod.url, ScaleType.CENTER_CROP) {
-                        stopLoadAnimation()
-                        tvTitle.visible()
-                        tvDescription.visible()
-                        btDiscoverMore.visible()
-                        tvTodayPicture.visible()
-                    }
-                else {
-                    ivApod.setImageResource(R.drawable.ic_play)
-                    stopLoadAnimation()
-                    tvTitle.visible()
-                    tvDescription.visible()
-                    btDiscoverMore.visible()
-                    tvTodayPicture.visible()
-                }
-            } ?: run {
-                if (viewModel.error.value.isNullOrBlank()) {
-                    tvError.visible()
-                    tvTitle.gone()
-                    tvDescription.gone()
-                    tvError.text = getString(R.string.error_unable_to_fetch)
-                }
+        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            if (isLoading) {
+                startLoadAnimation()
+            } else {
                 stopLoadAnimation()
             }
-        })
-        viewModel.error.observe(viewLifecycleOwner, Observer {
-            loadingView.gone()
-            tvError.visible()
-            tvError.text = it
-        })
+        }
+        viewModel.apodOfTheDay.observe(viewLifecycleOwner) {
+            with(binding) {
+                it?.let { apod ->
+                    tvTitle.text = apod.title
+                    tvDescription.text = apod.explanation
+
+                    if (apod.mediaType == APOD.MEDIA_TYPE_IMAGE)
+                        ivApod.loadUrl(apod.hdUrl ?: apod.url, ScaleType.CENTER_CROP) {
+                            viewModel.isLoading.value = false
+                            tvTitle.isVisible = true
+                            tvDescription.isVisible = true
+                            btDiscoverMore.isVisible = true
+                            tvTodayPicture.isVisible = true
+                        }
+                    else {
+                        ivApod.setImageResource(R.drawable.ic_play)
+                        viewModel.isLoading.value = false
+                        tvTitle.isVisible = true
+                        tvDescription.isVisible = true
+                        btDiscoverMore.isVisible = true
+                        tvTodayPicture.isVisible = true
+                    }
+                } ?: run {
+                    if (viewModel.error.value.isNullOrBlank()) {
+                        tvTitle.isVisible = false
+                        tvDescription.isVisible = false
+                        viewModel.error.value = getString(R.string.error_unable_to_fetch)
+                    }
+                }
+            }
+        }
     }
 
     private fun stopLoadAnimation() {
-        loadingView.stopLoadAnimation()
-        loadingView.gone()
+        with(binding) {
+            loadingView.stopLoadAnimation()
+        }
     }
 
     override fun onNetworkLost() {
-        if(viewModel.apodOfTheDay.value == null) {
-            tvError.visible()
-            tvTitle.gone()
-            tvDescription.gone()
-            tvError.text = getString(R.string.error_unable_to_fetch)
+        if (viewModel.apodOfTheDay.value == null) {
+            with(binding) {
+                tvTitle.isVisible = false
+                tvDescription.isVisible = false
+                viewModel.error.value = getString(R.string.error_unable_to_fetch)
+            }
             stopLoadAnimation()
         }
     }
 
     override fun onNetworkConnected() {
-        if(viewModel.apodOfTheDay.value == null) {
+        if (viewModel.apodOfTheDay.value == null) {
             startLoadAnimation()
             viewModel.fetchApodOfTheDay()
         }

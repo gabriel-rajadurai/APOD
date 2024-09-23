@@ -3,19 +3,16 @@ package com.gabriel.astronomypod.features.apodList
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.gabriel.astronomypod.R
 import com.gabriel.astronomypod.common.ScaleType
-import com.gabriel.astronomypod.common.gone
 import com.gabriel.astronomypod.common.loadUrl
-import com.gabriel.astronomypod.common.visible
 import com.gabriel.astronomypod.databinding.ItemApodBinding
 import com.gabriel.data.models.APOD
-import kotlinx.android.synthetic.main.item_apod.view.*
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class ApodListAdapter(private val listener: ApodItemListener) :
@@ -55,16 +52,16 @@ class ApodListAdapter(private val listener: ApodItemListener) :
             )
 
             if (previousExpandedItem == adapterPosition) {
-                itemView.infoLayout.visible()
-                itemView.tvTitle.setCompoundDrawablesWithIntrinsicBounds(
+                binding.infoLayout.isVisible = true
+                binding.tvTitle.setCompoundDrawablesWithIntrinsicBounds(
                     null,
                     null,
                     ContextCompat.getDrawable(itemView.context, R.drawable.ic_collapse),
                     null
                 )
             } else {
-                itemView.infoLayout.gone()
-                itemView.tvTitle.setCompoundDrawablesWithIntrinsicBounds(
+                binding.infoLayout.isVisible = false
+                binding.tvTitle.setCompoundDrawablesWithIntrinsicBounds(
                     null,
                     null,
                     ContextCompat.getDrawable(itemView.context, R.drawable.ic_expand),
@@ -73,16 +70,16 @@ class ApodListAdapter(private val listener: ApodItemListener) :
             }
 
             if (apod.mediaType == APOD.MEDIA_TYPE_IMAGE) {
-                itemView.ivApod.loadUrl(apod.url, ScaleType.CENTER_CROP) {}
-                itemView.ivDownload.visible()
+                binding.ivApod.loadUrl(apod.url, ScaleType.CENTER_CROP) {}
+                binding.ivDownload.isVisible = true
             } else {
-                itemView.ivApod.setImageResource(R.drawable.ic_play)
-                itemView.ivDownload.gone()
+                binding.ivApod.setImageResource(R.drawable.ic_play)
+                binding.ivDownload.isVisible = false
             }
 
-            itemView.tvTitle.setOnClickListener {
+            binding.tvTitle.setOnClickListener {
                 if (previousExpandedItem == adapterPosition) {
-                    itemView.infoLayout.gone()
+                    binding.infoLayout.isVisible = false
                     previousExpandedItem = -1
                     notifyItemChanged(adapterPosition)
                     return@setOnClickListener
@@ -95,10 +92,10 @@ class ApodListAdapter(private val listener: ApodItemListener) :
                 notifyItemChanged(adapterPosition)
             }
 
-            itemView.ivDownload.setOnClickListener { listener.downloadApod(apod) }
-            itemView.ivShare.setOnClickListener { listener.shareApod(apod) }
-            itemView.ivOpen.setOnClickListener { listener.viewApod(apod) }
-            itemView.ivApod.setOnClickListener { listener.viewApod(apod) }
+            binding.ivDownload.setOnClickListener { listener.downloadApod(apod) }
+            binding.ivShare.setOnClickListener { listener.shareApod(apod) }
+            binding.ivOpen.setOnClickListener { listener.viewApod(apod) }
+            binding.ivApod.setOnClickListener { listener.viewApod(apod) }
         }
 
     }
