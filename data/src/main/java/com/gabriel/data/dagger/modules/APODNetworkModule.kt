@@ -2,12 +2,14 @@ package com.gabriel.data.dagger.modules
 
 import com.gabriel.data.api.APODNetworkService
 import com.gabriel.data.api.RequestInteceptor
+import com.gabriel.data.datasources.defs.APODDataSourceDef
 import com.gabriel.data.datasources.impl.remote.APODRemoteDataSource
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Module
@@ -48,9 +50,10 @@ class APODNetworkModule {
         return retrofit.create(APODNetworkService::class.java)
     }
 
+    @RemoteSource
     @Singleton
     @Provides
-    fun provideApodRemoteDataSource(apodService: APODNetworkService): APODRemoteDataSource {
+    fun provideApodRemoteDataSource(apodService: APODNetworkService): APODDataSourceDef {
         return APODRemoteDataSource((apodService))
     }
 
@@ -58,4 +61,9 @@ class APODNetworkModule {
     companion object {
         private const val BASE_URL = "https://api.nasa.gov/planetary/"
     }
+
 }
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class RemoteSource

@@ -7,7 +7,7 @@ import com.gabriel.data.models.APOD
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class APODLocalDataSource(private val apodDao: ApodDAO) : APODDataSourceDef {
+internal class APODLocalDataSource(private val apodDao: ApodDAO) : APODDataSourceDef {
 
     override suspend fun fetchAstronomyPictureOfTheDay(): APOD? {
         return apodDao.getApodByDate(

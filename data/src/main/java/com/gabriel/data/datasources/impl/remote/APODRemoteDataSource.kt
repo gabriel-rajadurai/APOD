@@ -10,7 +10,7 @@ import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class APODRemoteDataSource @Inject constructor(
+internal class APODRemoteDataSource(
     private val apodNetworkService: APODNetworkService
 ) : APODDataSourceDef {
 

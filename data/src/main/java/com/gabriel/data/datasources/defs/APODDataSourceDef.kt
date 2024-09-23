@@ -3,7 +3,7 @@ package com.gabriel.data.datasources.defs
 import androidx.lifecycle.LiveData
 import com.gabriel.data.models.APOD
 
-internal interface APODDataSourceDef {
+interface APODDataSourceDef {
 
     suspend fun fetchAstronomyPictureOfTheDay(): APOD?
 
