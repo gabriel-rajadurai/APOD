@@ -94,9 +94,9 @@ fun ViewApodScreen(
             modifier = Modifier
               .fillMaxWidth()
               .height(
-                if (isTablet()){
+                if (isTablet()) {
                   800.dp
-                }else{
+                } else {
                   600.dp
                 }
               ),

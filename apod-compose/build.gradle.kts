@@ -4,6 +4,7 @@ plugins {
   alias(libs.plugins.compose.compiler)
   kotlin("kapt")
   alias(libs.plugins.google.dagger.hilt)
+  alias(libs.plugins.jetbrains.kotlin.serialize)
 }
 
 android {
@@ -50,6 +51,7 @@ android {
 dependencies {
 
   implementation(libs.core.ktx)
+  implementation(libs.kotlinx.serialization.json)
   implementation(libs.lifecycle.runtime.ktx)
   implementation(libs.activity.compose)
   implementation(platform(libs.compose.bom))
@@ -64,6 +66,7 @@ dependencies {
 
   implementation(libs.coil.compose)
   implementation(libs.hilt.navigation.compose)
+  implementation(libs.navigation.compose)
 
   implementation(project(":data"))
   implementation(project(":core"))

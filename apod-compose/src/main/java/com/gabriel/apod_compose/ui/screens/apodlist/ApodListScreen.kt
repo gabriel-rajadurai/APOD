@@ -30,7 +30,8 @@ import com.gabriel.apod_compose.ui.theme.AstronomyPODTheme
 
 @Composable
 fun ApodListScreen(
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
+  viewApod: (String) -> Unit
 ) {
 
   val viewmodel: ApodListViewModel = hiltViewModel()
@@ -79,7 +80,15 @@ fun ApodListScreen(
                 }
               ),
             pod = it,
-            onAction = {}
+            onAction = { action ->
+              when (action) {
+                Action.Download -> TODO()
+                Action.Share -> TODO()
+                Action.View -> {
+                  viewApod(it.date)
+                }
+              }
+            }
           )
         }
       }
@@ -95,7 +104,7 @@ fun ApodListScreen(
 private fun ApodListScreenPreview() {
   AstronomyPODTheme {
     Surface {
-      ApodListScreen(modifier = Modifier.fillMaxSize())
+      ApodListScreen(modifier = Modifier.fillMaxSize()){}
     }
   }
 }

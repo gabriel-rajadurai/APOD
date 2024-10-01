@@ -23,12 +23,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.compose.rememberNavController
+import com.gabriel.apod_compose.navigation.Screen
 import com.gabriel.apod_compose.ui.commons.ApodImage
 import com.gabriel.apod_compose.ui.theme.AstronomyPODTheme
 
 @Composable
 fun TodayApodScreen(
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
+  discoverMore : () -> Unit
 ) {
 
   val viewModel: TodayApodViewModel = hiltViewModel()
@@ -67,7 +70,7 @@ fun TodayApodScreen(
         Spacer(modifier = Modifier.size(40.dp))
 
         OutlinedButton(
-          onClick = { /*TODO*/ },
+          onClick = discoverMore,
           modifier = Modifier
             .fillMaxWidth()
             .height(60.dp),
@@ -106,7 +109,7 @@ fun TodayApodScreenPreview() {
     Surface {
       TodayApodScreen(
         modifier = Modifier.fillMaxSize()
-      )
+      ){}
     }
   }
 }

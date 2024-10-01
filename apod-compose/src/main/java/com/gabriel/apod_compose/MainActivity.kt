@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import com.gabriel.apod_compose.navigation.ApodNavGraph
 import com.gabriel.apod_compose.ui.screens.apodlist.ApodListScreen
 import com.gabriel.apod_compose.ui.screens.today.TodayApodScreen
 import com.gabriel.apod_compose.ui.screens.viewapod.ViewApodScreen
@@ -37,7 +38,7 @@ class MainActivity : ComponentActivity() {
     setContent {
       AstronomyPODTheme {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-          TodayApodScreen(
+          ApodNavGraph(
             modifier = Modifier
               .fillMaxSize()
               .padding(innerPadding)
