@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.gabriel.apod_compose.ui.screens.apodlist.ApodListScreen
 import com.gabriel.apod_compose.ui.screens.today.TodayApodScreen
 import com.gabriel.apod_compose.ui.theme.AstronomyPODTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,7 +24,7 @@ class MainActivity : ComponentActivity() {
     setContent {
       AstronomyPODTheme {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-          TodayApodScreen(
+          ApodListScreen(
             modifier = Modifier
               .fillMaxSize()
               .padding(innerPadding)

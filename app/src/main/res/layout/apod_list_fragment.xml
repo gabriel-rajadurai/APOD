@@ -58,7 +58,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="20dp"
-            android:text="Date"
+            android:text="@string/date"
             android:visibility="gone"
             app:icon="@drawable/ic_date"
             tools:visibility="visible" />
