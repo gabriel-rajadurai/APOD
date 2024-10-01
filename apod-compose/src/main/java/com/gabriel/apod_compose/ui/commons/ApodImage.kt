@@ -3,7 +3,6 @@ package com.gabriel.apod_compose.ui.commons
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,6 +13,7 @@ import androidx.compose.ui.res.vectorResource
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.gabriel.apod_compose.R
+import com.gabriel.apod_compose.commons.LoadingIndicator
 import com.gabriel.data.models.APOD
 
 @Composable
@@ -25,7 +25,7 @@ fun ApodImage(
 
   if (LocalInspectionMode.current) {
     Box(modifier = modifier) {
-      CircularProgressIndicator(
+      LoadingIndicator(
         modifier = Modifier.align(Alignment.Center)
       )
     }
@@ -46,7 +46,7 @@ fun ApodImage(
     val painter = rememberAsyncImagePainter(model = pod?.hdUrl ?: pod?.url)
     Box(modifier = modifier) {
       if (pod == null || painter.state !is AsyncImagePainter.State.Success) {
-        CircularProgressIndicator(
+        LoadingIndicator(
           modifier = Modifier.align(Alignment.Center)
         ) //use custom progress indicator
       }

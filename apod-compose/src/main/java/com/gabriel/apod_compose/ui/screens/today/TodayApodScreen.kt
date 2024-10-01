@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
@@ -23,8 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.compose.rememberNavController
-import com.gabriel.apod_compose.navigation.Screen
+import com.gabriel.apod_compose.commons.LoadingIndicator
 import com.gabriel.apod_compose.ui.commons.ApodImage
 import com.gabriel.apod_compose.ui.theme.AstronomyPODTheme
 
@@ -42,7 +40,7 @@ fun TodayApodScreen(
   ) {
 
     if (podResult == null) {
-      CircularProgressIndicator(
+      LoadingIndicator(
         modifier = Modifier.align(Alignment.Center)
       )
     } else if (podResult.isSuccess) {

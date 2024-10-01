@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -25,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gabriel.apod_compose.R
+import com.gabriel.apod_compose.commons.LoadingIndicator
 import com.gabriel.apod_compose.commons.isTablet
 import com.gabriel.apod_compose.ui.theme.AstronomyPODTheme
 
@@ -60,7 +60,7 @@ fun ApodListScreen(
   ) {
     if (astronomyPictures == null) {
       Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        CircularProgressIndicator()
+        LoadingIndicator()
       }
     } else if (astronomyPictures.isSuccess) {
       LazyColumn(
