@@ -17,11 +17,11 @@ data class APOD(
     val mediaType: String
 ) {
 
-    companion object {
-        private const val HD_URL = "hdurl"
-        private const val MEDIA_TYPE = "media_type"
-        const val MEDIA_TYPE_IMAGE = "image"
-        const val MEDIA_TYPE_VIDEO = "video"
-        const val DATE_FORMAT = "yyyy-MM-dd"
-    }
+  companion object {
+    private const val HD_URL = "hdurl"
+    private const val MEDIA_TYPE = "media_type"
+    const val MEDIA_TYPE_IMAGE = "image"
+    const val MEDIA_TYPE_VIDEO = "video"
+    const val DATE_FORMAT = "yyyy-MM-dd"
+  }
 }

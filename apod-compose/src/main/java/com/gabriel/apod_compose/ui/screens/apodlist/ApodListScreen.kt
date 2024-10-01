@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gabriel.apod_compose.R
+import com.gabriel.apod_compose.commons.isTablet
 import com.gabriel.apod_compose.ui.theme.AstronomyPODTheme
 
 @Composable
@@ -66,11 +67,17 @@ fun ApodListScreen(
           .fillMaxSize()
           .padding(it)
       ) {
-        items(astronomyPictures.getOrNull()!!){
+        items(astronomyPictures.getOrNull()!!) {
           ApodListItem(
             modifier = Modifier
               .fillMaxWidth()
-              .height(300.dp),
+              .height(
+                if (isTablet()) {
+                  500.dp
+                } else {
+                  300.dp
+                }
+              ),
             pod = it,
             onAction = {}
           )
