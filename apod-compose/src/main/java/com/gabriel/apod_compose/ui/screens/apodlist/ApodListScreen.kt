@@ -54,7 +54,7 @@ fun ApodListScreen(
         onClick = {
 
         },
-        expanded = listState.isScrollInProgress
+        expanded = !listState.isScrollInProgress
       )
     }
   ) {
@@ -64,6 +64,7 @@ fun ApodListScreen(
       }
     } else if (astronomyPictures.isSuccess) {
       LazyColumn(
+        state = listState,
         modifier = Modifier
           .fillMaxSize()
           .padding(it)

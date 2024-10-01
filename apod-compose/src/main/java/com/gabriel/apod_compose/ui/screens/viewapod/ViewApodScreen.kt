@@ -17,12 +17,16 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -33,7 +37,8 @@ import com.gabriel.apod_compose.ui.commons.ApodImage
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun ViewApodScreen(
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
+  navigateBack: () -> Unit
 ) {
 
   val viewModel: ViewApodViewModel = hiltViewModel()
@@ -63,10 +68,20 @@ fun ViewApodScreen(
 
         stickyHeader("toolbar") {
           TopAppBar(
-            title = { Text(text = apod.title) },
-            modifier = Modifier.fillMaxWidth(),
+            title = {
+              Text(
+                text = apod.title,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+              )
+            },
+            colors = TopAppBarDefaults.topAppBarColors().copy(
+              containerColor = Color.Transparent
+            ),
+            modifier = Modifier
+              .fillMaxWidth(),
             navigationIcon = {
-              IconButton(onClick = { /*TODO*/ }) {
+              IconButton(onClick = navigateBack) {
                 Icon(painter = painterResource(id = R.drawable.ic_back), contentDescription = "")
               }
             },

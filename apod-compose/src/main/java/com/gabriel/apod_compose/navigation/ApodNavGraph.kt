@@ -27,7 +27,9 @@ fun ApodNavGraph(
       }
     }
     composable<Screen.ViewApod> {
-      ViewApodScreen(modifier = modifier)
+      ViewApodScreen(modifier = modifier){
+        navController.popBackStack()
+      }
     }
   }
 }
@@ -42,7 +44,7 @@ sealed interface Screen {
 
   @Serializable
   data class ViewApod(
-    val podDate: String = "{podDate}"
+    val podDate: String
   )
 }
 
