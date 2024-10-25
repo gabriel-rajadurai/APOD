@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.room.Room
 import com.gabriel.data.datasources.ApodDAO
 import com.gabriel.data.datasources.ApodDatabase
+import com.gabriel.data.datasources.DBMigrations
 import com.gabriel.data.datasources.defs.APODDataSourceDef
 import com.gabriel.data.datasources.impl.local.APODLocalDataSource
 import dagger.Module
@@ -28,7 +29,8 @@ class APODRoomModule {
             context,
             ApodDatabase::class.java,
             "Apod_Database"
-        ).build()
+        ).addMigrations(DBMigrations.migration1_2())
+          .build()
     }
 
 

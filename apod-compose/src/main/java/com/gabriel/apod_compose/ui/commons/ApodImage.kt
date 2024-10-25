@@ -32,30 +32,50 @@ fun ApodImage(
     return
   }
 
-  if (pod?.mediaType == APOD.MEDIA_TYPE_VIDEO) {
-    Box(
-      modifier = modifier,
-      contentAlignment = Alignment.Center
-    ) {
-      Image(
-        imageVector = ImageVector.vectorResource(id = R.drawable.ic_play),
-        contentDescription = ""
-      )
-    }
-  } else {
-    val painter = rememberAsyncImagePainter(model = pod?.hdUrl ?: pod?.url)
-    Box(modifier = modifier) {
-      if (pod == null || painter.state !is AsyncImagePainter.State.Success) {
-        LoadingIndicator(
-          modifier = Modifier.align(Alignment.Center)
-        ) //use custom progress indicator
+  when (pod?.mediaType) {
+    APOD.MEDIA_TYPE_VIDEO -> {
+      val painter = rememberAsyncImagePainter(model = pod.thumbnail)
+      Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center
+      ) {
+        if (painter.state !is AsyncImagePainter.State.Success) {
+          LoadingIndicator(
+            modifier = Modifier.align(Alignment.Center)
+          )
+        }
+        Image(
+          modifier = Modifier.fillMaxSize(),
+          contentScale = contentScale,
+          painter = painter,
+          contentDescription = ""
+        )
+        Image(
+          imageVector = ImageVector.vectorResource(id = R.drawable.ic_play),
+          contentDescription = ""
+        )
       }
+    }
+    APOD.MEDIA_TYPE_IMAGE -> {
+      val painter = rememberAsyncImagePainter(model = pod.hdUrl ?: pod.url)
+      Box(modifier = modifier) {
+        if (painter.state !is AsyncImagePainter.State.Success) {
+          LoadingIndicator(
+            modifier = Modifier.align(Alignment.Center)
+          )
+        }
 
-      Image(
-        modifier = Modifier.fillMaxSize(),
-        contentScale = contentScale,
-        painter = painter,
-        contentDescription = ""
+        Image(
+          modifier = Modifier.fillMaxSize(),
+          contentScale = contentScale,
+          painter = painter,
+          contentDescription = ""
+        )
+      }
+    }
+    else -> {
+      Box(
+        modifier = modifier,
       )
     }
   }

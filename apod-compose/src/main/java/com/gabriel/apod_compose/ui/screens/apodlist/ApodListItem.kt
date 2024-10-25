@@ -191,6 +191,7 @@ private fun ApodListItemPreview() {
           "",
           "The new comet has passed its closest to the Sun and is now moving closer to the Earth. C/2023 A3 (Tsuchinshan-ATLAS) is currently moving out from inside the orbit of Venus and on track to pass its nearest to the Earth",
           "",
+          "",
           ""
         ),
         onAction = {}

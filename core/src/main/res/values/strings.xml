@@ -1,13 +1,15 @@
 <resources>
-    <string name="app_name">APOD</string>
-    <string name="load_today_picture">Loading today\'s picture</string>
-    <string name="loading">Loading..</string>
-    <string name="loading_media">Loading media</string>
-    <string name="discover_more">Discover more</string>
-    <string name="error_unable_to_fetch">Failed to fetch data. \nPlease check your network connectivity</string>
-    <string name="error_unable_to_fetch_apod">Failed to fetch APOD</string>
-    <string name="connection_lost">Connection unavailable</string>
-    <string name="connection_available">Connection available</string>
-    <string name="today_s_picture">Today\'s Picture</string>
+  <string name="app_name">APOD</string>
+  <string name="load_today_picture">Loading today\'s picture</string>
+  <string name="loading">Loading..</string>
+  <string name="loading_media">Loading media</string>
+  <string name="discover_more">Discover more</string>
+  <string name="error_unable_to_fetch">Failed to fetch data. \nPlease check your network connectivity</string>
+  <string name="error_unable_to_fetch_apod">Failed to fetch APOD</string>
+  <string name="connection_lost">Connection unavailable</string>
+  <string name="connection_available">Connection available</string>
+  <string name="today_s_picture">Today\'s Picture</string>
   <string name="date">Date</string>
+  <string name="ok">Okay</string>
+  <string name="cancel">Cancel</string>
 </resources>
