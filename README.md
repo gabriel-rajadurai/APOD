@@ -1,6 +1,13 @@
 ### APOD - View Astronomy Pictures
+
+* **Update**
+  * A compose implementation is now available. Application source code available in [apod-compose](https://github.com/gabriel-rajadurai/APOD/tree/master/apod-compose) module
+  * Common data module to serve both the native and the compose implementation has been added.
+
 * **Installation**
   * Download the latest release from the [releases section](https://github.com/gabriel-rajadurai/APOD/releases).
+    * [Native version](https://github.com/gabriel-rajadurai/APOD/releases/tag/v1.1.0)
+    * [Compose version](https://github.com/gabriel-rajadurai/APOD/releases/tag/v1.0.0_compose)
   * Open the apk file in your Android device. Allow installation from Unknown sources. Click on Install.
   
 * **Getting Started**
