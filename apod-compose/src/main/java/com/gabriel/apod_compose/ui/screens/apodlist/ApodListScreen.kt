@@ -1,5 +1,6 @@
 package com.gabriel.apod_compose.ui.screens.apodlist
 
+import android.content.Context
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,12 +30,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.gabriel.apod.core.ApodUtils
 import com.gabriel.apod_compose.R
 import com.gabriel.apod_compose.commons.LoadingIndicator
 import com.gabriel.apod_compose.commons.isTablet
@@ -53,6 +56,7 @@ fun ApodListScreen(
 ) {
 
   val viewmodel: ApodListViewModel = hiltViewModel()
+  val context: Context = LocalContext.current
   val listState = rememberLazyListState()
   var showDatePicker by remember { mutableStateOf(false) }
 
@@ -130,7 +134,7 @@ fun ApodListScreen(
           .fillMaxSize()
           .padding(it)
       ) {
-        items(astronomyPictures.getOrNull()!!) {
+        items(astronomyPictures.getOrNull()!!) { picture ->
           ApodListItem(
             modifier = Modifier
               .fillMaxWidth()
@@ -141,13 +145,19 @@ fun ApodListScreen(
                   300.dp
                 }
               ),
-            pod = it,
+            pod = picture,
             onAction = { action ->
               when (action) {
-                Action.Download -> TODO()
-                Action.Share -> TODO()
+                Action.Download -> {
+                  ApodUtils.download(context, picture)
+                }
+
+                Action.Share -> {
+                  ApodUtils.share(context, picture)
+                }
+
                 Action.View -> {
-                  viewApod(it.date)
+                  viewApod(picture.date)
                 }
               }
             }

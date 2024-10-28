@@ -85,7 +85,6 @@ fun ApodListItem(
     Column(
       modifier = Modifier
         .fillMaxSize()
-        .background(MaterialTheme.colorScheme.background.copy(alpha = 0.7f))
     ) {
 
       InfoView(infoViewAlpha, pod, onAction)
@@ -157,20 +156,23 @@ private fun ColumnScope.InfoView(
         )
       }
 
-      IconButton(onClick = {
-        onAction(Action.Share)
-      }) {
-        Icon(painter = painterResource(id = R.drawable.ic_share), contentDescription = "")
+      if (pod?.mediaType == APOD.MEDIA_TYPE_IMAGE){
+        IconButton(onClick = {
+          onAction(Action.Share)
+        }) {
+          Icon(painter = painterResource(id = R.drawable.ic_share), contentDescription = "")
+        }
+
+        IconButton(onClick = {
+          onAction(Action.Download)
+        }) {
+          Icon(
+            painter = painterResource(id = R.drawable.ic_download),
+            contentDescription = ""
+          )
+        }
       }
 
-      IconButton(onClick = {
-        onAction(Action.Download)
-      }) {
-        Icon(
-          painter = painterResource(id = R.drawable.ic_download),
-          contentDescription = ""
-        )
-      }
 
     }
   }
