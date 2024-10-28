@@ -24,10 +24,20 @@ android {
     }
   }
 
+  signingConfigs {
+    create("release") {
+      keyAlias = "gabriel"
+      keyPassword = "gabriel"
+      storeFile = file("key/apod")
+      storePassword = "gabriel"
+    }
+  }
+
   buildTypes {
     release {
       isMinifyEnabled = false
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+      signingConfig = signingConfigs.getByName("release")
     }
   }
   compileOptions {
