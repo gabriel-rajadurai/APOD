@@ -15,6 +15,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import com.gabriel.astronomypod.R
 import com.gabriel.astronomypod.common.PermissionManager
+import com.gabriel.astronomypod.common.ScaleType
 import com.gabriel.astronomypod.common.loadUrl
 import com.gabriel.astronomypod.databinding.ActivityViewApodBinding
 import com.gabriel.data.models.APOD
@@ -96,12 +97,15 @@ class ViewApodActivity : AppCompatActivity() {
                     ivApod.isVisible = true
                     infoLayout.isVisible = true
                     if (apod.mediaType == APOD.MEDIA_TYPE_IMAGE) {
-                        ivApod.loadUrl(apod.hdUrl ?: apod.url) {
+                        ivApod.loadUrl((apod.hdUrl ?: apod.url)!!) {
                             viewModel.isLoading.value = false
                         }
+                    } else if (apod.mediaType == APOD.MEDIA_TYPE_VIDEO){
+                        apod.thumbnail?.let {
+                            binding.ivApod.loadUrl(it, ScaleType.CENTER_CROP) {}
+                        } ?: binding.ivApod.setImageResource(R.drawable.ic_play)
                     } else {
                         viewModel.isLoading.value = false
-                        ivApod.setImageResource(R.drawable.ic_play)
                     }
                 } ?: run {
                     ivApod.isVisible = false

@@ -3,7 +3,7 @@ package com.gabriel.astronomypod.features.apodList
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.gabriel.astronomypod.common.BaseViewModel
+import com.gabriel.apod.core.BaseViewModel
 import com.gabriel.data.models.APOD
 import com.gabriel.data.repos.ApodRepo
 import dagger.hilt.android.lifecycle.HiltViewModel

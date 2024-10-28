@@ -27,6 +27,7 @@ class RequestInteceptor : Interceptor {
         val url = request.url
         val newUrl = url.newBuilder()
             .addQueryParameter("api_key", "wRhfrDUOQf53z2UvpadrP3qmNNhSxx0Wjlv5HhFQ")
+            .addQueryParameter("thumbs", "True")
             .build()
         val newRequest = request.newBuilder()
             .url(newUrl)

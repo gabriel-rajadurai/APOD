@@ -5,12 +5,15 @@ import android.content.Context
 import androidx.room.Room
 import com.gabriel.data.datasources.ApodDAO
 import com.gabriel.data.datasources.ApodDatabase
+import com.gabriel.data.datasources.DBMigrations
+import com.gabriel.data.datasources.defs.APODDataSourceDef
 import com.gabriel.data.datasources.impl.local.APODLocalDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Module
@@ -26,20 +29,26 @@ class APODRoomModule {
             context,
             ApodDatabase::class.java,
             "Apod_Database"
-        ).build()
+        ).addMigrations(DBMigrations.migration1_2())
+          .build()
     }
+
 
     @Singleton
     @Provides
     fun provideApodDao(
-        database: ApodDatabase
-    ): ApodDAO {
-        return database.apodDao()
-    }
+      database: ApodDatabase
+    ) = database.apodDao()
 
-    @Singleton
-    @Provides
-    fun provideApodLocalDataSource(dao: ApodDAO): APODLocalDataSource {
+  @LocalSource
+  @Singleton
+  @Provides
+    fun provideApodLocalDataSource(dao: ApodDAO): APODDataSourceDef {
         return APODLocalDataSource(dao)
     }
+
 }
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class LocalSource

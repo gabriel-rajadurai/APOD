@@ -41,7 +41,7 @@ fun ImageView.loadUrl(
             override fun onLoadFailed(
                 e: GlideException?,
                 model: Any?,
-                target: Target<Drawable>?,
+                target: Target<Drawable>,
                 isFirstResource: Boolean
             ): Boolean {
                 onFinish(e?.localizedMessage)
@@ -49,10 +49,10 @@ fun ImageView.loadUrl(
             }
 
             override fun onResourceReady(
-                resource: Drawable?,
-                model: Any?,
-                target: Target<Drawable>?,
-                dataSource: DataSource?,
+                resource: Drawable,
+                model: Any,
+                target: Target<Drawable>,
+                dataSource: DataSource,
                 isFirstResource: Boolean
             ): Boolean {
                 onFinish(null)

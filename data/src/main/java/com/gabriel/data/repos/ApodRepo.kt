@@ -1,6 +1,8 @@
 package com.gabriel.data.repos
 
 import androidx.lifecycle.LiveData
+import com.gabriel.data.dagger.modules.LocalSource
+import com.gabriel.data.dagger.modules.RemoteSource
 import com.gabriel.data.datasources.defs.APODDataSourceDef
 import com.gabriel.data.datasources.impl.local.APODLocalDataSource
 import com.gabriel.data.datasources.impl.remote.APODRemoteDataSource
@@ -8,14 +10,13 @@ import com.gabriel.data.models.APOD
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
+import javax.inject.Singleton
 
-class ApodRepo @Inject constructor() : APODDataSourceDef {
-
-    @Inject
-    lateinit var apodRemoteDs: APODRemoteDataSource
-
-    @Inject
-    lateinit var apodLocalDs: APODLocalDataSource
+@Singleton
+class ApodRepo @Inject constructor(
+    @RemoteSource private val apodRemoteDs : APODDataSourceDef,
+    @LocalSource private val apodLocalDs : APODDataSourceDef,
+) : APODDataSourceDef {
 
     override suspend fun fetchAstronomyPictureOfTheDay(): APOD? {
         //First we check if today's picture is already in db

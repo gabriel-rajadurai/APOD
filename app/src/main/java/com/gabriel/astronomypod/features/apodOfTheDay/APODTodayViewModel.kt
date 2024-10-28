@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.gabriel.astronomypod.R
-import com.gabriel.astronomypod.common.BaseViewModel
+import com.gabriel.apod.core.BaseViewModel
 import com.gabriel.data.models.APOD
 import com.gabriel.data.repos.ApodRepo
 import dagger.hilt.android.lifecycle.HiltViewModel

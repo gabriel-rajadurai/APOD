@@ -1,4 +1,4 @@
-package com.gabriel.astronomypod.common
+package com.gabriel.apod.core
 
 import androidx.lifecycle.ViewModel
 import android.content.Context
